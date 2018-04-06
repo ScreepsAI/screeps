@@ -61,7 +61,7 @@ Object.defineProperties(RoomPosition.prototype, {
 			);
 		},
 	},
-	isFreeSpace: {
+	canBuild: {
 		get(): boolean {
 			return this.terrain !== 'wall' && _.isUndefined(this.constructionSite) && _.isUndefined(this.mainStructure);
 		},
@@ -84,12 +84,12 @@ RoomPosition.prototype.getAdjacentPos = function(range: number): RoomPosition[] 
 	return AdjacentPos;
 };
 
-RoomPosition.prototype.getFreeSpace = function(range: number): RoomPosition[] {
-	return _.filter(this.getAdjacentPos(range), (pos: RoomPosition) => pos.isFreeSpace);
+RoomPosition.prototype.getCanBuildSpaces = function(range: number): RoomPosition[] {
+	return _.filter(this.getAdjacentPos(range), (pos: RoomPosition) => pos.canBuild);
 };
 
-RoomPosition.prototype.hasStructure = function(type: StructureConstant): boolean {
-	return !!_.filter(this.structures, (s: Structure) => s.structureType === type)[0];
+RoomPosition.prototype.getStructure = function(type: StructureConstant): Structure | undefined {
+	return _.filter(this.structures, (s: Structure) => s.structureType === type)[0];
 };
 
 RoomPosition.prototype.getPositionInDirection = function(direction: number): RoomPosition {
