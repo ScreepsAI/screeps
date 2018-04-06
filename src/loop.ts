@@ -6,6 +6,7 @@ import { ErrorMapper } from './utils/ErrorMapper';
 const Root = (): void => {
 	if (_.isUndefined(global.isRoot) || _.isUndefined(Memory.config)) {
 		console.log(String.fromCodePoint(0x1f503), 'Code Reloading ...');
+
 		// Assign config
 		if (_.isUndefined(Memory.config)) Memory.config = {};
 		const config = require('./config.js');
@@ -16,21 +17,24 @@ const Root = (): void => {
 			.first();
 		_.assign(Memory.config, config);
 		_.assign(global, Memory.config);
+
 		// Extend game prototypes
 		require('./prototypes');
+
 		// Extend functions
 		require('./global');
+
 		// Checkpoint
 		global.isRoot = true;
 		Log.success('Root Done');
-		Memory.Clocks = {};
-		const func = function() {
-			Log.info(this.params.counter++);
-			if (this.params.counter > 10) {
-				this.restart();
-			}
-		};
-		new Clock('test clock', { counter: 0 }, func, 1, true);
+		// Memory.Clocks = {};
+		// const func = function() {
+		// 	Log.info(this.params.counter++);
+		// 	if (this.params.counter > 10) {
+		// 		this.restart();
+		// 	}
+		// };
+		// new Clock('test clock', { counter: 0 }, func, 1, true);
 	}
 };
 

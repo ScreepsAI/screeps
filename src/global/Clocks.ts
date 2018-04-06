@@ -3,6 +3,9 @@
  */
 class Clocks {
 	private l = {};
+	constructor() {
+		if (!Memory.Clocks) Memory.Clocks = {};
+	}
 	get list(): string[] {
 		return _.map(this.l, (clock: Clock) => `'${clock.name}'`);
 	}
