@@ -2,7 +2,7 @@ import { Manager } from './Manager';
 
 export class CreepManager extends Manager {
 	constructor() {
-		super('CreepManager');
+		super('creep');
 	}
 
 	public run(): void {
@@ -10,15 +10,15 @@ export class CreepManager extends Manager {
 		_.forEach(Game.creeps, (creep: Creep) => {
 			this.work(creep);
 		});
-		this.recordStats();
+		this.recordUpdateTime();
 	}
 
-	private work(creep: Creep): void {
+	public work(creep: Creep): void {
 		// TODO: 简单试例
 		// if (_.isUndefined(creep.target)) return;
 	}
 
-	private cleanMemory(): void {
+	public cleanMemory(): void {
 		_.forEach(Memory.creeps, (creep: CreepMemory, name: string) => {
 			if (!Game.creeps[name]) {
 				if (creep.hasBorn) delete Memory.creeps[name];

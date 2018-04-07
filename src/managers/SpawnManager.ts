@@ -7,7 +7,7 @@ export class SpawnManager extends Manager {
 	private uuid: { [type: string]: number };
 
 	constructor() {
-		super('SpawnManager');
+		super('spawn');
 	}
 
 	public run(): void {
@@ -15,7 +15,7 @@ export class SpawnManager extends Manager {
 			let spawns = room.freeSpawns;
 			if (spawns.length > 0) this.spawnQueue(room, spawns);
 		});
-		this.recordStats();
+		this.recordUpdateTime();
 	}
 
 	private spawnQueue(room: Room, spawns: StructureSpawn[]) {

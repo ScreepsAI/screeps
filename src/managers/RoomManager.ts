@@ -8,7 +8,7 @@ export class RoomManager extends Manager {
 	readonly ROOM_MEMORY_TIMECHECK = 100000;
 
 	constructor() {
-		super('RoomManager');
+		super('room');
 	}
 
 	public run(): void {
@@ -18,10 +18,10 @@ export class RoomManager extends Manager {
 			this.buildCreepToc(room);
 		});
 		this.memory.roomToc = this.roomToc;
-		this.recordStats();
+		this.recordUpdateTime();
 	}
 
-	private cleanMemory(): void {
+	public cleanMemory(): void {
 		if (_.isUndefined(Memory.rooms)) Memory.rooms = {};
 		_.forEach(Object.keys(Memory.rooms), (roomMemory: any, name: string) => {
 			if (Object.keys(roomMemory).length === 0) {
