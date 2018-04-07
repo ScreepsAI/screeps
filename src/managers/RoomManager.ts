@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import * as _ from 'lodash';
 import { Manager } from './Manager';
 import { RoomType } from '../enums/room';
 import { isFriend } from '../utils';

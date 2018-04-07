@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { RoomType } from '../enums/room';
 
 // 获取之类型的房间列表

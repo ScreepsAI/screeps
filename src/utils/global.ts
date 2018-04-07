@@ -1,15 +1,14 @@
-import _ from 'lodash';
+import * as _ from 'lodash';
 // 间隔执行
 export function setTickout(func: Function, ticks: number): void {
 	if (Game.time % ticks === 0) func();
 }
 
-export function getUsername(): string {
-	return _(Game.rooms)
-		.map('controller')
-		.filter('my')
-		.map('owner.username')
-		.first() as string;
+export function getUsername() {
+	// console.log(_);
+	// const room = _.filter(Game.rooms, (o: Room) => o.controller.my);
+	// console.log(_.filter(Game.rooms),() => {});
+	// return room.controller.owner.username;
 }
 
 // 判断是否在白名单

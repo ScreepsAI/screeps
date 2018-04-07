@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 const Color = {
 	[COLOR_RED]: '#F92672',
 	[COLOR_PURPLE]: '#AE81FF',

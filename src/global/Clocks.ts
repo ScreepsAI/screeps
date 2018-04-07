@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 /**
  * 大时钟
  */

@@ -14,7 +14,7 @@ export default (options: EnvOptions): Configuration => {
 	};
 	return {
 		entry: {
-			main: ['screeps-regenerator-runtime/runtime', './src/main.js'],
+			main: ['./src/main.js'],
 		},
 		output: {
 			devtoolModuleFilenameTemplate: '[resource-path]',

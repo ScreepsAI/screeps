@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { TargetType } from '../enums/target';
 
 Object.defineProperties(Creep.prototype, {

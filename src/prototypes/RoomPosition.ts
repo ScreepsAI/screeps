@@ -1,5 +1,4 @@
 // import { getGame } from '../utils';
-import _ from 'lodash';
 
 Object.defineProperties(RoomPosition.prototype, {
 	raw: {

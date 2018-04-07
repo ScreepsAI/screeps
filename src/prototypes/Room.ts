@@ -1,3 +1,4 @@
+/// <reference types="lodash"/>
 import _ from 'lodash';
 import { RoleType } from '../enums/creep';
 

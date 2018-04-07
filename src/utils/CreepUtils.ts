@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 export function makeBodyArray(Body: BodySetup | BodyPartConstant[]): BodyPartConstant[] {
 	if (_.isArray(Body)) return Body;
 	let BodyArray = [] as BodyPartConstant[];

@@ -1,3 +1,5 @@
+import regeneratorRuntime from 'screeps-regenerator-runtime';
+import _ from 'lodash';
 import Loop from './loop';
 
 function* main() {

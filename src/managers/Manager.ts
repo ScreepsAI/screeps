@@ -1,4 +1,5 @@
-import _ from 'lodash';
+import * as _ from 'lodash';
+
 /**
  * manager 是一个队对象进行管理的工具
  * 包括维护相关的memory

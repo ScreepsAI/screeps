@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import * as _ from 'lodash';
 import { Manager } from './Manager';
 import { getRooms, getCost } from '../utils';
 import { RoomType } from '../enums/room';
