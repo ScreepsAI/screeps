@@ -4,7 +4,7 @@ import { Managers } from './managers';
 // 注入 prototypes 并注册新的 global 项目，使用 isRoot 进行检测是否需要重新注入
 // ==========================================================================
 const Root = (): void => {
-	if (_.isUndefined(global.isRoot) || _.isUndefined(ME)) {
+	if (_.isUndefined(global.isRoot) || _.isUndefined(Memory.config)) {
 		console.log(String.fromCodePoint(0x1f503), 'Code Reloading ...');
 
 		// Assign config
@@ -38,7 +38,6 @@ const Root = (): void => {
 // ==========================================================================
 const Loop = (): void => {
 	global.Clocks.tick();
-	Log.info('Start:', Game.time);
 	Managers.run();
 };
 
