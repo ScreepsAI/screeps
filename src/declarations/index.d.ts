@@ -5,5 +5,9 @@ declare namespace NodeJS {
 		Clock: Clock;
 		Log: LogConstructor;
 		Dye: Function;
+		getObjByIds: Function;
+		toIds: Function;
 	}
 }
+
+type IdOjects = Creep | Structure | Source;

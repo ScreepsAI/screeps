@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { Manager } from './Manager';
 
 export class CreepManager extends Manager {
@@ -6,7 +7,7 @@ export class CreepManager extends Manager {
 	}
 
 	public run(): void {
-		this.cleanMemory();
+		this.clean();
 		_.forEach(Game.creeps, (creep: Creep) => {
 			this.work(creep);
 		});
@@ -18,7 +19,7 @@ export class CreepManager extends Manager {
 		// if (_.isUndefined(creep.target)) return;
 	}
 
-	public cleanMemory(): void {
+	public clean(): void {
 		_.forEach(Memory.creeps, (creep: CreepMemory, name: string) => {
 			if (!Game.creeps[name]) {
 				if (creep.hasBorn) delete Memory.creeps[name];

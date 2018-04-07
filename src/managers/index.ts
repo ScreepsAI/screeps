@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { Manager } from './Manager';
 import { CreepManager } from './CreepManager';
 import { RoomManager } from './RoomManager';

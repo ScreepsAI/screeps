@@ -1,4 +1,4 @@
-import { getGame } from '../utils';
+import _ from 'lodash';
 import { RoleType } from '../enums/creep';
 
 Object.defineProperties(Room.prototype, {
@@ -214,13 +214,13 @@ Room.prototype.getRoleCount = function(type: RoleType): number {
 Room.prototype.cacheFilter = function(key: string, objs: any[], filter: Function, timeout: number = 1): any[] {
 	const cacheResult = _.get(this.memory, ['_filter', key]) as FilterCache;
 	if (!_.isUndefined(cacheResult) && Game.time - cacheResult.time <= timeout) {
-		return getGame.objsByIdArray(cacheResult.value);
+		return global.getObjByIds(cacheResult.value);
 	}
 	// 重新find
 	const result = _.filter(objs, filter);
 	_.set(this.memory, ['_filter', key], {
 		time: Game.time,
-		value: getGame.objsToIdArray(result),
+		value: global.toIds(result),
 	});
 	return result;
 };
@@ -229,13 +229,13 @@ Room.prototype.cacheFind = function(type: number, timeout: number = 1): any[] {
 	const isExit = type === (FIND_EXIT_TOP || FIND_EXIT_RIGHT || FIND_EXIT_BOTTOM || FIND_EXIT_LEFT || FIND_EXIT);
 	const cacheResult = _.get(this.memory, ['_find', type]) as FindCache;
 	if (!_.isUndefined(cacheResult) && Game.time - cacheResult.time <= timeout) {
-		return isExit ? cacheResult.value : getGame.objsByIdArray(cacheResult.value);
+		return isExit ? cacheResult.value : global.getObjByIds(cacheResult.value);
 	}
 	// 重新find
 	const result = this.find(type);
 	_.get(this.memory, ['_find', type], {
 		time: Game.time,
-		value: isExit ? result : getGame.objsToIdArray(result),
+		value: isExit ? result : global.toIds(result),
 	});
 	return result;
 };

@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { Manager } from './Manager';
 import { RoomType } from '../enums/room';
 import { isFriend } from '../utils';
@@ -12,16 +13,16 @@ export class RoomManager extends Manager {
 	}
 
 	public run(): void {
-		this.cleanMemory();
-		_.forEach(Game.rooms, (room: Room) => {
-			this.buildRoomToc(room);
-			this.buildCreepToc(room);
-		});
-		this.memory.roomToc = this.roomToc;
+		// this.cleanMemory();
+		// _.forEach(Game.rooms, (room: Room) => {
+		// 	this.buildRoomToc(room);
+		// 	this.buildCreepToc(room);
+		// });
+		// this.memory.roomToc = this.roomToc;
 		this.recordUpdateTime();
 	}
 
-	public cleanMemory(): void {
+	public clean(): void {
 		if (_.isUndefined(Memory.rooms)) Memory.rooms = {};
 		_.forEach(Object.keys(Memory.rooms), (roomMemory: any, name: string) => {
 			if (Object.keys(roomMemory).length === 0) {

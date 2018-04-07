@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { Manager } from './Manager';
 import { getRooms, getCost } from '../utils';
 import { RoomType } from '../enums/room';
@@ -17,6 +18,8 @@ export class SpawnManager extends Manager {
 		});
 		this.recordUpdateTime();
 	}
+
+	public clean() {}
 
 	private spawnQueue(room: Room, spawns: StructureSpawn[]) {
 		if (room.memory.orders === undefined) room.memory.orders = [];

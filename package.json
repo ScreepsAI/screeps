@@ -36,7 +36,7 @@
 		"source-map": "^0.6.1"
 	},
 	"devDependencies": {
-		"@types/lodash": "^3.10.2",
+		"@types/lodash": "^4.14.106",
 		"@types/node": "^9.6.0",
 		"@types/source-map": "^0.5.7",
 		"@types/tether": "^1.4.3",

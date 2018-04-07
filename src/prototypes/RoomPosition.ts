@@ -1,4 +1,5 @@
-import { getGame } from '../utils';
+// import { getGame } from '../utils';
+import _ from 'lodash';
 
 Object.defineProperties(RoomPosition.prototype, {
 	raw: {
@@ -115,39 +116,39 @@ RoomPosition.prototype.getPositionInDirection = function(direction: number): Roo
 	}
 };
 
-RoomPosition.prototype.cacheLookFor = function(type: LookConstant, timeout: number = 1): any[] {
-	if (type === LOOK_TERRAIN) timeout = 60;
+// RoomPosition.prototype.cacheLookFor = function(type: LookConstant, timeout: number = 1): any[] {
+// 	if (type === LOOK_TERRAIN) timeout = 60;
 
-	const pos = `X${this.x}Y${this.y}`;
-	const cacheResult = _.get(Memory, ['_lookFor', pos, type]) as LookForCache;
+// 	const pos = `X${this.x}Y${this.y}`;
+// 	const cacheResult = _.get(Memory, ['_lookFor', pos, type]) as LookForCache;
 
-	if (!_.isUndefined(cacheResult) && Game.time - cacheResult.time <= timeout) {
-		switch (type) {
-			case LOOK_TERRAIN:
-				return cacheResult.value;
-			case LOOK_FLAGS:
-				return getGame.flagsByNameArray(cacheResult.value);
-			default:
-				return getGame.objsByIdArray(cacheResult.value);
-		}
-	}
-	const result = this.lookFor(type);
-	let value: any[];
-	console.log(type, LOOK_TERRAIN);
-	switch (type) {
-		case LOOK_TERRAIN:
-			value = result[0];
-			break;
-		case LOOK_FLAGS:
-			value = getGame.flagsToNameArray(result);
-			break;
-		default:
-			value = getGame.objsToIdArray(result);
-			break;
-	}
-	_.set(Memory, ['_lookFor', pos, type], {
-		time: Game.time,
-		value: value,
-	});
-	return result;
-};
+// 	if (!_.isUndefined(cacheResult) && Game.time - cacheResult.time <= timeout) {
+// 		switch (type) {
+// 			case LOOK_TERRAIN:
+// 				return cacheResult.value;
+// 			case LOOK_FLAGS:
+// 				return getGame.flagsByNameArray(cacheResult.value);
+// 			default:
+// 				return getGame.objsByIdArray(cacheResult.value);
+// 		}
+// 	}
+// 	const result = this.lookFor(type);
+// 	let value: any[];
+// 	console.log(type, LOOK_TERRAIN);
+// 	switch (type) {
+// 		case LOOK_TERRAIN:
+// 			value = result[0];
+// 			break;
+// 		case LOOK_FLAGS:
+// 			value = getGame.flagsToNameArray(result);
+// 			break;
+// 		default:
+// 			value = getGame.objsToIdArray(result);
+// 			break;
+// 	}
+// 	_.set(Memory, ['_lookFor', pos, type], {
+// 		time: Game.time,
+// 		value: value,
+// 	});
+// 	return result;
+// };
