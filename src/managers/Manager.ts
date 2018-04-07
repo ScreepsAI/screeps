@@ -1,9 +1,9 @@
-import _ from 'lodash';
+import { upperFirst } from 'lodash';
 export abstract class Manager {
-	private name: string;
+	public name: string;
 
 	constructor(name: string) {
-		this.name = _.upperFirst(name);
+		this.name = upperFirst(name);
 		this.initMemory();
 	}
 

@@ -1,6 +1,6 @@
 import { ErrorMapper } from './utils/ErrorMapper';
 import { getUsername } from './utils';
-import { Managers } from './managers';
+import { InitManager } from './managers';
 // 注入 prototypes 并注册新的 global 项目，使用 isRoot 进行检测是否需要重新注入
 // ==========================================================================
 const Root = (): void => {
