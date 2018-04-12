@@ -21,13 +21,13 @@ interface RoomPosition {
 	canMoveThrough: boolean;
 	canBuild: boolean;
 
-	getAdjacentPos(range: number): RoomPosition[];
+	getAdjacent(range?: number): RoomPosition[];
 
-	getCanBuildSpaces(range: number): RoomPosition[];
+	// getCanBuildSpaces(range: number): RoomPosition[];
 
-	getStructure(type: StructureConstant): Structure | undefined;
+	// getStructure(type: StructureConstant): Structure | undefined;
 
-	getPositionInDirection(direction: number): RoomPosition;
+	// getPositionInDirection(direction: number): RoomPosition;
 
-	cacheLookFor(type: LookConstant, timeout?: number): any[];
+	// cacheLookFor(type: LookConstant, timeout?: number): any[];
 }

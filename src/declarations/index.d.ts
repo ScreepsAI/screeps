@@ -10,4 +10,4 @@ declare namespace NodeJS {
 	}
 }
 
-type IdOjects = Creep | Structure | Source;
+type IdObject = Creep | Structure | Source | ConstructionSite;

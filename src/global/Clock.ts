@@ -1,5 +1,6 @@
 /**
  * 时钟对象 能够暂停，重启，清空，销毁
+ * 脚本初始化的时候会将autoRun为true的自动初始化
  */
 class Clock {
 	public name: string;
@@ -56,9 +57,11 @@ class Clock {
 				params: {},
 			};
 			this.params = this.initParams;
-		} else return; // 定义过则跳过
+		} else if (global.hasReboot) return; // 定义过则跳过
 
-		if (this.autoRun) global.Clocks.addClock(this); // autoRun时自动加入Clocks大时钟，否则要手动加入
+		// autoRun时自动加入Clocks大时钟，否则要手动加入
+		if (this.autoRun) global.Clocks.addClock(this);
+		Log.info('Clock ' + this.name + 'has been initialized');
 	}
 
 	run() {

@@ -1,6 +1,7 @@
-import regeneratorRuntime from 'screeps-regenerator-runtime';
+import { ErrorMapper } from './utils/ErrorMapper';
+import { Reboot, needReboot } from './reboot';
 import _ from 'lodash';
-import Loop from './loop';
+import { Loop } from './loop';
 
 function* main() {
 	console.log();
@@ -10,7 +11,7 @@ function* main() {
 	console.log();
 	while (true) {
 		Loop();
-		yield null;
+		yield;
 	}
 }
 
@@ -32,6 +33,6 @@ exports.loop = function() {
 			Memory.thread = regeneratorRuntime.serializeGenerator(thread);
 		}
 	} catch (e) {
-		console.log(String.fromCodePoint(0x1f503), `Code Changing at ${Game.time} ...`);
+		console.log(`Code Changing at ${Game.time} ...`);
 	}
 };

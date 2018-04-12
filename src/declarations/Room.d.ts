@@ -23,56 +23,59 @@ interface Room {
 	print: string;
 	rcl: number;
 	my: boolean;
-	reservedByMe: boolean;
-	canReserved: boolean;
-	signedByMe: boolean;
+	energy: number;
+	energyCapacity: number;
+	// reservedByMe: boolean;
+	// canReserved: boolean;
+	// signedByMe: boolean;
 
 	// constructionSite
-	constructionSite: ConstructionSite[];
+	constructionSites: ConstructionSite[];
 
 	// structures
-	allStructures: Structure[];
-	myStructures: Structure[];
-	hostileStructures: Structure[];
-	containers: StructureContainer[];
-	extensions: StructureExtension[];
-	extractor: StructureExtractor | undefined;
-	labs: StructureLab[];
-	links: StructureLink[];
-	nuker: StructureNuker | undefined;
-	observer: StructureObserver | undefined;
-	powerSpawn: StructurePowerSpawn | undefined;
-	spawns: StructureSpawn[];
-	freeSpawns: StructureSpawn[];
-	storage: StructureStorage | undefined;
-	terminal: StructureTerminal | undefined;
-	roads: StructureRoad[];
-	ramparts: StructureRampart[];
-	walls: StructureWall[];
-	KeeperLairs: StructureKeeperLair[];
+	// allStructures: Structure[];
+	// myStructures: Structure[];
+	// hostileStructures: Structure[];
+	// containers: StructureContainer[];
+	// extensions: StructureExtension[];
+	// extractor: StructureExtractor | undefined;
+	// labs: StructureLab[];
+	// links: StructureLink[];
+	// nuker: StructureNuker | undefined;
+	// observer: StructureObserver | undefined;
+	// powerSpawn: StructurePowerSpawn | undefined;
+	// spawns: StructureSpawn[];
+	// freeSpawns: StructureSpawn[];
+	// storage: StructureStorage | undefined;
+	// terminal: StructureTerminal | undefined;
+	// roads: StructureRoad[];
+	// ramparts: StructureRampart[];
+	// walls: StructureWall[];
+	// KeeperLairs: StructureKeeperLair[];
 
 	// Creeps
-	allCreeps: Creep[];
-	myCreeps: Creep[];
-	hostileCreeps: Creep[];
-	hasHostileCreeps: boolean;
+	// allCreeps: Creep[];
+	myCreep: Creep[];
+	allyCreep: Creep[];
+	hostileCreep: Creep[];
+	// hasHostileCreeps: boolean;
 
 	// Resources
-	sources: Source[];
-	mineral: Mineral | undefined;
+	source: Source[];
+	// mineral: Mineral | undefined;
 
 	// Functions
-	allStructuresFilter(type: string): Structure[];
+	// allStructuresFilter(type: string): Structure[];
 
-	myStructuresFilter(type: string): Structure[];
+	// myStructuresFilter(type: string): Structure[];
 
-	hostileStructuresFilter(type: string): Structure[];
+	// hostileStructuresFilter(type: string): Structure[];
 
-	getRole(type: number): Creep[];
+	// getRole(type: number): Creep[];
 
-	getRoleCount(type: number): number;
+	// getRoleCount(type: number): number;
 
-	cacheFilter(key: string, objs: any[], filter: Function, timeout?: number): any[];
+	// cacheFilter(key: string, objs: any[], filter: Function, timeout?: number): any[];
 
-	cacheFind(type: number, timeout?: number): any[];
+	// cacheFind(type: number, timeout?: number): any[];
 }

@@ -15,17 +15,17 @@ Object.defineProperties(RoomPosition.prototype, {
 			return Game.rooms[this.roomName];
 		},
 	},
-	memory: {
-		get(): any {
-			return this.room.memory;
-		},
-		set(value): void {
-			this.room.memory = value;
-		},
-	},
+	// memory: {
+	// 	get(): any {
+	// 		return this.room.memory;
+	// 	},
+	// 	set(value): void {
+	// 		this.room.memory = value;
+	// 	},
+	// },
 	terrain: {
 		get(): Terrain {
-			return this.cacheLookFor(LOOK_TERRAIN)[0];
+			return this.cacheLookFor(LOOK_TERRAIN);
 		},
 	},
 	structures: {
@@ -33,46 +33,46 @@ Object.defineProperties(RoomPosition.prototype, {
 			return this.cacheLookFor(LOOK_STRUCTURES);
 		},
 	},
-	mainStructure: {
-		get(): Structure | undefined {
-			return _.filter(
-				this.structures,
-				(s: Structure) => s.structureType !== STRUCTURE_RAMPART && s.structureType !== STRUCTURE_ROAD,
-			)[0];
-		},
-	},
-	constructionSite: {
-		get(): ConstructionSite | undefined {
-			return this.cacheLookFor(LOOK_CONSTRUCTION_SITES)[0];
-		},
-	},
-	creep: {
-		get(): Creep | undefined {
-			return this.cacheLookFor(LOOK_CREEPS)[0];
-		},
-	},
-	canMoveThrough: {
-		get(): boolean {
-			return (
-				this.terrain !== 'wall' &&
-				(_.isUndefined(this.constructionSite) ||
-					this.constructionSite.structureType === (STRUCTURE_ROAD || STRUCTURE_RAMPART)) &&
-				(_.isUndefined(this.mainStructure) || this.mainStructure.structureType === STRUCTURE_CONTAINER)
-			);
-		},
-	},
-	canBuild: {
-		get(): boolean {
-			return this.terrain !== 'wall' && _.isUndefined(this.constructionSite) && _.isUndefined(this.mainStructure);
-		},
-	},
+	// mainStructure: {
+	// 	get(): Structure | undefined {
+	// 		return _.filter(
+	// 			this.structures,
+	// 			(s: Structure) => s.structureType !== STRUCTURE_RAMPART && s.structureType !== STRUCTURE_ROAD,
+	// 		)[0];
+	// 	},
+	// },
+	// constructionSite: {
+	// 	get(): ConstructionSite | undefined {
+	// 		return this.cacheLookFor(LOOK_CONSTRUCTION_SITES)[0];
+	// 	},
+	// },
+	// creep: {
+	// 	get(): Creep | undefined {
+	// 		return this.cacheLookFor(LOOK_CREEPS)[0];
+	// 	},
+	// },
+	// canMoveThrough: {
+	// 	get(): boolean {
+	// 		return (
+	// 			this.terrain !== 'wall' &&
+	// 			(_.isUndefined(this.constructionSite) ||
+	// 				this.constructionSite.structureType === (STRUCTURE_ROAD || STRUCTURE_RAMPART)) &&
+	// 			(_.isUndefined(this.mainStructure) || this.mainStructure.structureType === STRUCTURE_CONTAINER)
+	// 		);
+	// 	},
+	// },
+	// canBuild: {
+	// 	get(): boolean {
+	// 		return this.terrain !== 'wall' && _.isUndefined(this.constructionSite) && _.isUndefined(this.mainStructure);
+	// 	},
+	// },
 });
 
 // ////////////////////////////////
 // Functions
 // ////////////////////////////////
 
-RoomPosition.prototype.getAdjacentPos = function(range: number): RoomPosition[] {
+RoomPosition.prototype.getAdjacent = function(range: number = 1): RoomPosition[] {
 	const AdjacentPos = [];
 	for (let _x = -range; _x <= range; _x++) {
 		for (let _y = -range; _y <= range; _y++) {
@@ -84,36 +84,36 @@ RoomPosition.prototype.getAdjacentPos = function(range: number): RoomPosition[] 
 	return AdjacentPos;
 };
 
-RoomPosition.prototype.getCanBuildSpaces = function(range: number): RoomPosition[] {
-	return _.filter(this.getAdjacentPos(range), (pos: RoomPosition) => pos.canBuild);
-};
+// RoomPosition.prototype.getCanBuildSpaces = function(range: number): RoomPosition[] {
+// 	return _.filter(this.getAdjacentPos(range), (pos: RoomPosition) => pos.canBuild);
+// };
 
-RoomPosition.prototype.getStructure = function(type: StructureConstant): Structure | undefined {
-	return _.filter(this.structures, (s: Structure) => s.structureType === type)[0];
-};
+// RoomPosition.prototype.getStructure = function(type: StructureConstant): Structure | undefined {
+// 	return _.filter(this.structures, (s: Structure) => s.structureType === type)[0];
+// };
 
-RoomPosition.prototype.getPositionInDirection = function(direction: number): RoomPosition {
-	switch (direction) {
-		case TOP:
-			return new RoomPosition(this.x, this.y - 1, this.roomName);
-		case TOP_RIGHT:
-			return new RoomPosition(this.x + 1, this.y - 1, this.roomName);
-		case RIGHT:
-			return new RoomPosition(this.x + 1, this.y, this.roomName);
-		case BOTTOM_RIGHT:
-			return new RoomPosition(this.x + 1, this.y + 1, this.roomName);
-		case BOTTOM:
-			return new RoomPosition(this.x, this.y + 1, this.roomName);
-		case BOTTOM_LEFT:
-			return new RoomPosition(this.x - 1, this.y + 1, this.roomName);
-		case LEFT:
-			return new RoomPosition(this.x - 1, this.y, this.roomName);
-		case TOP_LEFT:
-			return new RoomPosition(this.x - 1, this.y - 1, this.roomName);
-		default:
-			return new RoomPosition(this.x, this.y, this.roomName);
-	}
-};
+// RoomPosition.prototype.getPositionInDirection = function(direction: number): RoomPosition {
+// 	switch (direction) {
+// 		case TOP:
+// 			return new RoomPosition(this.x, this.y - 1, this.roomName);
+// 		case TOP_RIGHT:
+// 			return new RoomPosition(this.x + 1, this.y - 1, this.roomName);
+// 		case RIGHT:
+// 			return new RoomPosition(this.x + 1, this.y, this.roomName);
+// 		case BOTTOM_RIGHT:
+// 			return new RoomPosition(this.x + 1, this.y + 1, this.roomName);
+// 		case BOTTOM:
+// 			return new RoomPosition(this.x, this.y + 1, this.roomName);
+// 		case BOTTOM_LEFT:
+// 			return new RoomPosition(this.x - 1, this.y + 1, this.roomName);
+// 		case LEFT:
+// 			return new RoomPosition(this.x - 1, this.y, this.roomName);
+// 		case TOP_LEFT:
+// 			return new RoomPosition(this.x - 1, this.y - 1, this.roomName);
+// 		default:
+// 			return new RoomPosition(this.x, this.y, this.roomName);
+// 	}
+// };
 
 // RoomPosition.prototype.cacheLookFor = function(type: LookConstant, timeout: number = 1): any[] {
 // 	if (type === LOOK_TERRAIN) timeout = 60;

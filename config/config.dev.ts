@@ -1,5 +1,6 @@
 import CommonConfig from './config.common';
 import { Configuration } from 'webpack';
+import * as _ from 'lodash';
 
 export default (options: EnvOptions): Configuration => {
 	const webpackConfig: Configuration = CommonConfig(options);

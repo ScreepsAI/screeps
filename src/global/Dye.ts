@@ -28,12 +28,7 @@ export const Dye = (style: string | number, ...text: any[]): string => {
 	const msg = text.join(' ');
 	if (_.isObject(applyStyle)) {
 		let css = '';
-		const format = (value: string | number, key: string) => {
-			css += `${_.kebabCase(key)}: ${value};`;
-		};
-		_.forEach(applyStyle, format);
+		_.forEach(Object(applyStyle), (value, key: string) => (css += `${_.kebabCase(key)}: ${value};`));
 		return `<span style="${css}">${msg}</span>`;
-	} else {
-		return `<span style="color: ${applyStyle}">${msg}</span>`;
-	}
+	} else return `<span style="color: ${applyStyle}">${msg}</span>`;
 };
