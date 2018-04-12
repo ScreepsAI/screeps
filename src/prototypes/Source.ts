@@ -4,6 +4,27 @@ Object.defineProperties(Source.prototype, {
 			return this.energy > 0;
 		},
 	},
+	accessibleFields: {
+		get: function() {
+			const memory = global.SourceManager.getMemory(this.id);
+			if (memory && !memory.accessibleFields) memory.accessibleFields = this.pos.getAccessibleFields();
+
+			return memory.accessibleFields;
+		}
+	},
+	maxPosts: {
+		get: function() {
+			const memory = global.SourceManager.getMemory(this.id);
+			if (memory && !memory.maxPosts) memory.maxPosts = this.accessibleFields.length;
+
+			return memory.maxPosts;
+		}
+	},
+	posts: {
+		get: function() {
+			return global.PostManager.getByTarget(this.id);
+		}
+	}
 	// memory: {
 	// 	get(): any {
 	// 		this._checkMemory();

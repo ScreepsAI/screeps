@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+// import * as _ from 'lodash';
 import { Manager } from './Manager';
 // import { Emoji } from '../utils/Emoji';
 // import { Behaviours } from '../creeps/behaviours';
@@ -11,9 +11,9 @@ export class CreepManager extends Manager {
 	/**
 	 * 检查是否有空闲的myCreep
 	 */
-	checkIdle(room: Room) {
-		_.forEach(room.myCreep, (creep: Creep) => {});
-	}
+	// checkIdle(room: Room) {
+	// 	_.forEach(room.myCreep, (creep: Creep) => {});
+	// }
 
 	// public run(): void {
 	// 	this.clean();

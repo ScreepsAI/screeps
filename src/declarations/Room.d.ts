@@ -33,6 +33,7 @@ interface Room {
 	constructionSites: ConstructionSite[];
 
 	// structures
+	mySpawn: StructureSpawn[];
 	// allStructures: Structure[];
 	// myStructures: Structure[];
 	// hostileStructures: Structure[];

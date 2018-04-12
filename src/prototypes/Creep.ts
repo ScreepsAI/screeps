@@ -1,13 +1,22 @@
 import * as _ from 'lodash';
 // import { TargetType } from '../enums/target';
-import { RoleType } from '../enums/creep';
+// import { RoleType } from '../enums/creep';
 // import { ActionType } from '../enums/action';
 
 Object.defineProperties(Creep.prototype, {
-	role: {
-		get(): RoleType {
-			return this.memory.role;
+	/**
+	 * 签订的合同列表
+	 * 仅保存合同的id号
+	 */
+	posts: {
+		get() {
+			return this.memory.posts;
 		},
+	},
+	takePost: {
+		value: function() {
+			
+		}
 	},
 	// homeRoom: {
 	// 	get(): Room {

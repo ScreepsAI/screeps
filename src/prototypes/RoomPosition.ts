@@ -15,6 +15,11 @@ Object.defineProperties(RoomPosition.prototype, {
 			return Game.rooms[this.roomName];
 		},
 	},
+	entries: {
+		configurable: true,
+		enumerable: true,
+		get: function () { return this.look(); },
+	},
 	// memory: {
 	// 	get(): any {
 	// 		return this.room.memory;
@@ -24,14 +29,14 @@ Object.defineProperties(RoomPosition.prototype, {
 	// 	},
 	// },
 	terrain: {
-		get(): Terrain {
-			return this.cacheLookFor(LOOK_TERRAIN);
-		},
+		configurable: true,
+		enumerable: true,
+		get: function () { return this.lookFor(LOOK_TERRAIN); },
 	},
 	structures: {
-		get(): Structure[] {
-			return this.cacheLookFor(LOOK_STRUCTURES);
-		},
+		configurable: true,
+		enumerable: true,
+		get: function () { return this.lookFor(LOOK_STRUCTURES); },
 	},
 	// mainStructure: {
 	// 	get(): Structure | undefined {
@@ -72,21 +77,30 @@ Object.defineProperties(RoomPosition.prototype, {
 // Functions
 // ////////////////////////////////
 
-RoomPosition.prototype.getAdjacent = function(range: number = 1): RoomPosition[] {
-	const AdjacentPos = [];
+RoomPosition.prototype.getRawAdjacent = function (range: number = 1): any[] {
+	const rawAdjacentPos = [];
 	for (let _x = -range; _x <= range; _x++) {
 		for (let _y = -range; _y <= range; _y++) {
 			const x = this.x + _x;
 			const y = this.y + _y;
-			if (x >= 0 && x <= 49 && y >= 0 && y <= 49) AdjacentPos.push(new RoomPosition(x, y, this.roomName));
+			if (_x === 0 && _y === 0) continue;
+			if (x >= 0 && x <= 49 && y >= 0 && y <= 49) rawAdjacentPos.push(new RoomPosition(x, y, this.roomName).raw);
 		}
 	}
-	return AdjacentPos;
+	return rawAdjacentPos;
 };
 
-// RoomPosition.prototype.getCanBuildSpaces = function(range: number): RoomPosition[] {
-// 	return _.filter(this.getAdjacentPos(range), (pos: RoomPosition) => pos.canBuild);
-// };
+RoomPosition.prototype.getAdjacent = function (range: number = 1): RoomPosition[] {
+	return _.map(this.getRawAdjacent(range), (p) => new RoomPosition(p.x, p.y, p.roomName));
+};
+
+RoomPosition.prototype.getAccessibleFields = function (range: number = 1): RoomPosition[] {
+	return  _.filter(this.getAdjacent(range), (pos) => pos.terrain != 'wall');
+};
+
+RoomPosition.prototype.getRawAccessibleFields = function (range: number = 1): RoomPosition[] {
+	return _.map(this.getAccessibleFields(range), (p) => p.raw);
+};
 
 // RoomPosition.prototype.getStructure = function(type: StructureConstant): Structure | undefined {
 // 	return _.filter(this.structures, (s: Structure) => s.structureType === type)[0];

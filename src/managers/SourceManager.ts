@@ -36,35 +36,28 @@ export class SourceManager extends Manager {
 	//     poster: poster,
 	//     target: target.id,
 	//   }
-	// }
-
-	/**
-	 *
-	 * @param {IdOjects} obj
-	 * @returns {RoomObject[]}
-	 */
-	// addEntry(obj: Source): RoomObject[] {
-	//   this.memory.entries[obj.id] = {
-	//     id: obj.id,
-	//     room: obj.room.name,
-	//   };
-	//   return this.entries;
-	// }
+  // }
+  
+  addEntry(obj: Source) {
+		if (this.memory.entries[obj.id] === undefined) {
+      const accessibleFields = obj.pos.getRawAccessibleFields();
+			this.memory.entries[obj.id] = {
+        accessibleFields,
+        maxPosts: accessibleFields.length, // 岗位最大可签约合同数
+      };
+		}
+		this.entries[obj.id] = obj;
+		return this.entries;
+	}
 
 	/**
 	 * 创建岗位信息
 	 * 并递交给PostManager
 	 */
 	createPost(poster: Creep[], target: Source[], adjacents: RoomPosition[]) {
-		// const that = this;
-		_.forEach(adjacents, () => {
+		_.forEach(adjacents, () => { // 暂时不记录固定工位
 			const minerPost = new MinerPost(poster, target);
-			global.PostManager.addEntry(minerPost);
-			// that.addPost(postId, {
-			//   pos: adjacent,
-			//   poster: poster,
-			//   target: target,
-			// });
+			global.PostManager.addPost(minerPost);
 		});
 	}
 

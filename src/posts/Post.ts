@@ -22,33 +22,33 @@ import * as _ from 'lodash';
  * 所以在初始化的时候需要对参数做一遍校验处理，方便后续对合同的操作
  */
 export class Post {
-	id: number;
-	postType: string;
-	poster: string[] | Creep[];
-	posterId: string[];
-	target: string[] | any[];
-	targetId: string[];
-	bodyNeed: BodyPartConstant | BodyPartConstant[];
+    id: number;
+    postType: string;
+    poster: string[] | Creep[];
+    posterId: string[];
+    target: string[] | any[];
+    targetId: string[];
+    bodyNeed: BodyPartConstant | BodyPartConstant[];
 	/**
 	 * @param {string} postType 合同类型，合同名称
 	 * @param {string[] | Creep[] | StructureTower[]} poster 合同执行者id，可以是多个一起签署
 	 * @param {string[] | any[]} target 合同执行目标id，可以有多个目标对象
 	 * @param {BodyPartConstant[]} bodyNeed 合同执行目标id，可以有多个目标对象
 	 */
-	constructor(
-		postType: string,
-		poster: string[] | Creep[],
-		target: string[] | any[],
-		bodyNeed: BodyPartConstant | BodyPartConstant[],
-	) {
-		this.id = new Date().getTime();
-		this.postType = postType;
-		this.poster = poster;
-		this.target = target;
-		this.bodyNeed = bodyNeed;
-		this.checkParam(this.poster, 'poster');
-		this.checkParam(this.target, 'target');
-	}
+    constructor(
+        postType: string,
+        poster: string[] | Creep[],
+        target: string[] | any[],
+        bodyNeed: BodyPartConstant | BodyPartConstant[],
+    ) {
+        this.id = new Date().getTime();
+        this.postType = postType;
+        this.poster = poster;
+        this.target = target;
+        this.bodyNeed = bodyNeed;
+        this.checkParam(this.poster, 'poster');
+        this.checkParam(this.target, 'target');
+    }
 
 	/**
 	 * 检查entry参数是否合法
@@ -56,32 +56,43 @@ export class Post {
 	 * @param {string[] | any[]} entry
 	 * @param {string} coverName 最后覆盖的参数名，会将转换后的对象数组覆盖到this[cover]
 	 */
-	checkParam(entry: string[] | Creep[] | StructureTower[], coverName: string) {
-		if (entry instanceof Array && entry.length > 0 && _.isString(entry[0])) {
-			const objectArray: any[] = [];
-			const idArray: string[] = [];
-			_.forEach(entry, (p, index) => {
-				/**
-				 * 如果传入的是id
-				 * 则检查合同对象是否还存在
-				 */
-				if (_.isString(p)) {
-					const e = Game.getObjectById(p);
-					if (!e)
-						entry.splice(Number(index), 1); // 不存在了，则从id列表中删除
-					else objectArray.push(e);
-				}
-			});
-			this[coverName] = objectArray;
-			this[coverName + 'Id'] = idArray;
-		}
-	}
+    checkParam(entry: string[] | Creep[] | StructureTower[], coverName: string) {
+        let objectArray: any[] = [];
+        const idArray: string[] = [];
+        if (entry instanceof Array && entry.length > 0) {
+            if (_.isString(entry[0])) {
+
+                _.forEach(entry, (p, index) => {
+                    /**
+                     * 如果传入的是id
+                     * 则检查合同对象是否还存在
+                     */
+                    if (_.isString(p)) {
+                        const e = Game.getObjectById(p);
+                        if (!e)
+                            entry.splice(Number(index), 1); // 不存在了，则从id列表中删除
+                        else objectArray.push(e);
+                    }
+                });
+
+            } else {
+                objectArray = entry;
+                _.map(<Creep[] | StructureTower[]>entry, function(p: Creep | StructureTower){
+                    if (!_.isString(p)) {
+                        idArray.push(p.id);
+                    }
+                });
+            }
+            this[coverName] = objectArray;
+            this[coverName + 'Id'] = idArray;
+        }
+    }
 
 	/**
 	 * 输出扁平化的合同对象
 	 */
-	print() {
-		const { id, postType, posterId, targetId, bodyNeed } = this;
-		return { id, postType, posterId, targetId, bodyNeed };
-	}
+    print() {
+        const { id, postType, posterId, targetId, bodyNeed } = this;
+        return { id, postType, posterId, targetId, bodyNeed };
+    }
 }

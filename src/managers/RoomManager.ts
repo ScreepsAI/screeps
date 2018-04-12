@@ -122,34 +122,42 @@ export class RoomManager {
 			 */
 			const energy = room.energy;
 			const energyCapacity = room.energyCapacity;
-			if (energy / energyCapacity < 0.9) {
+			// console.log(energy, energyCapacity, energy / energyCapacity < 0.9)
+			if (energy / energyCapacity < 0.9 || energyCapacity === 300) {
 				// 如果能量储量小于90%
 				/**
-				 * SpawnManager
+				 * SourceManager
 				 * 检查矿点工位是否已满
 				 */
 				_.forEach(room.source, source => {
-					const adjacents = source.pos.getAdjacent(); // 获取空的工位列表
+					const adjacents = source.accessibleFields; // 获取空的工位列表
+					// console.log(adjacents);
 					// 由SourceManager保存和发布工位招领信息
-					global.SpawnManager.sendPost(adjacents);
+					global.SourceManager.createPost(undefined, [source], adjacents);
 				});
+				
 				/**
 				 * PostManager
 				 * 检查并筛选出是否有空的合同
 				 * 如合同工已经亡故
 				 */
+				// global.PostManager.checkIdlePost();
 
 				/**
+				 * 暂时跳过
+				 * ==============================================
 				 * CreepManager
 				 * 检查是否有没有工作的creep
 				 * 有的话，请它们认领任务
 				 */
 
 				/**
-				 * SpawnManager
+				 * PostManager
 				 * 检查是否还有空的岗位
 				 * 有的话，创造Creep来填补空缺岗位
 				 */
+				// global.PostManager.dealWithNoPosterPost();
+
 			}
 		});
 	}

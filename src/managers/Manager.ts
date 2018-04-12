@@ -18,6 +18,10 @@ import * as _ from 'lodash';
 export abstract class Manager {
 	public name: string;
 	public cacheName: string;
+	/**
+	 * entries为运行时环境缓存
+	 * 一旦重新提交代码或者过了24点，将会被清空
+	 */
 	public entries: object;
 
 	constructor(name: string) {
@@ -66,13 +70,7 @@ export abstract class Manager {
 		Memory.Managers[this.name] = value;
 	}
 
-	get global() {
-		return this.entries;
-	}
 
-	set global(v) {
-		this.entries = v;
-	}
 
 	/**
 	 * =================================================================
@@ -126,6 +124,10 @@ export abstract class Manager {
 	// 获取该管理器管理的对象
 	get(id: string): IdObject | undefined {
 		return this.entries[id];
+	}
+
+	getMemory(id: string) {
+		return this.memory.entries[id];
 	}
 
 	addEntry(obj: any) {

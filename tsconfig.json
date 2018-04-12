@@ -6,6 +6,9 @@
       "dom",
       "es2016"
     ],
+    "files": [
+      "Post.ts"
+    ],
     "baseUrl": "src/",
     "sourceMap": true,
     "declaration":true,

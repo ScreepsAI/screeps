@@ -22,8 +22,10 @@ interface RoomPosition {
 	canBuild: boolean;
 
 	getAdjacent(range?: number): RoomPosition[];
+	getRawAdjacent(range?: number): any[];
 
-	// getCanBuildSpaces(range: number): RoomPosition[];
+	getAccessibleFields(range?: number): RoomPosition[];
+	getRawAccessibleFields(range?: number): any[];
 
 	// getStructure(type: StructureConstant): Structure | undefined;
 
