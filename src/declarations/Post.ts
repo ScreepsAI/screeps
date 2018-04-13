@@ -4,4 +4,5 @@ type Post = {
 	poster: string | string[] | any | any[];
 	target: string | string[] | any | any[];
 	bodyNeed: BodyPartConstant | BodyPartConstant[];
+	options: object;
 };

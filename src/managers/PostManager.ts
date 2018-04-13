@@ -11,15 +11,22 @@ import { Post } from '../posts/Post';
  * 合同管理器
  */
 export class PostManager extends Manager {
-    noPosterPost = {};
-    noTargetPost = {};
-    emptyPost = {};
     constructor() {
         super('post');
-        this.memory.noPosterPost = {};
-        this.memory.noTargetPost = {};
-        this.memory.emptyPost = {};
     }
+
+    get noPosterPosts() {
+        return _.filter(this.entries, p => !p.poster && p.target);
+    }
+
+    get noTargetPosts() {
+        return _.filter(this.entries, p => p.poster && !p.target);
+    }
+
+    get emptyPosts() {
+        return _.filter(this.entries, p => !p.poster && !p.target);
+    }
+
 	/**
 	 * @param {string} postType 合同类型，合同名称
 	 * @param {string[]} poster 合同执行者id，可以是多个人一起签署
@@ -30,45 +37,10 @@ export class PostManager extends Manager {
 	/**
 	 * 记录合同内容
      * @param {Post} post
-     * @param {string} type 表示合同的状态
 	 */
-    addPost(post: Post): object {
-        const type = this.getPostType(post);
-        if (this.memory.entries[post.id] === undefined) {
-            const { id, postType, posterId, targetId, bodyNeed } = post;
-            console.log(post.targetId);
-            // this.memory.entries[post.id] = {
-            //     id,
-            //     postType,
-            //     posterId,
-            //     targetId,
-            //     bodyNeed,
-            // };
-            // if (type === 'normal') this.entries[post.id] = post;
-            // else if (type === 'noPoster') this.memory.noPosterPost[post.id] = post;
-            // else if (type === 'noTarget') this.memory.noTargetPost[post.id] = post;
-            // else if (type === 'empty') this.memory.emptyPost[post.id] = post;
-        } else {
-            Log.error('same post');
-        }
-
-        return this.entries;
-    }
-
-    /**
-     * 获取合同状态（类型）
-     * 合同分为一下几种种:
-     * 1.type: 'normal'     参数正常的合同，既有执行者，又有目标
-     * 2.type: 'noPoster'   执行者丢失的合同，需要添加执行者，目标已经确定
-     * 3.type: 'noTarget'   目标丢失的合同，需要添加目标，但是执行者已经确定
-     * 4.type: 'empty'      仅仅知道合同类型，执行者和目标均没有指定的空合同
-     */
-    getPostType(post: Post) {
-        if (!post.poster) {
-            if (!post.target) return 'empty';
-            else return 'noPoster';
-        } else if (!post.target) return 'noTarget';
-        else return 'normal';
+    addPost(post: Post) {
+        this.entries[post.id] = post;
+        this.memory.entries[post.id] = post.raw;
     }
 
     /**
@@ -76,23 +48,32 @@ export class PostManager extends Manager {
      * @param targetId 
      */
     getByTarget(targetId: string) {
-        return _.filter(this.memory.entries, (p) => p.targetId.indexOf(targetId) >= 0);
+        if (targetId) return _.filter(this.entries, (p) => p.targetId && p.targetId.indexOf(targetId) >= 0);
+        else return false;
     }
 
     /**
-     * 用目标id查询相关合同
-     * @param targetId 
+     * 用执行者id查询相关合同
+     * @param posterId 
      */
     getByPoster(posterId: string) {
-        return _.filter(this.memory.entries, (p) => p.posterId.indexOf(posterId) >= 0);
+        if (posterId) return _.filter(this.entries, (p) => p.posterId && p.posterId.indexOf(posterId) >= 0);
+        else return false;
     }
 
-    dealWithNoPosterPost() {
-        _.forEach(this.noPosterPost, (post: Post) => {
-            global.SpawnManager.createCreepByPost(post);
+    /**
+     * 处理无人在岗的合同
+     * 安排生产新的creep来填补岗位
+     */
+    dealwithNoPosterPosts() {
+        _.forEach(this.noPosterPosts, (post: any) => {
+            global.SpawnManager.createOrderByPost(post);
         });
     }
 
+    /**
+     * 检查筛选出无人在岗合同
+     */
     checkIdlePost() {
         _.forEach(this.entries, (entry, index) => {
             console.log(entry, index);
@@ -100,4 +81,17 @@ export class PostManager extends Manager {
     }
 
     clean() { }
+
+    /**
+	 * 是指从Memory恢复数据到global中
+	 */
+    rebootFromMemory(): void {
+        const that = this;
+        this.entries = {};
+        _.forEach(this.memory.entries, (post) => {
+            const { postType, posterId: poster, targetId: target, bodyNeed, id, options } = post;
+            that.entries[id] = new Post(postType, poster, target, bodyNeed, id, options);
+        });
+        Log.success(`Reboot ${_.padEnd(that.name, 20, ' ')} have ${Object.keys(that.entries).length} posts`);
+    }
 }

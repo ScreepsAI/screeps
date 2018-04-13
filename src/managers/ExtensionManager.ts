@@ -20,5 +20,4 @@ export class ExtensionManager extends Manager {
 	//     return this.entries;
 	// }
 
-	clean() {}
 }

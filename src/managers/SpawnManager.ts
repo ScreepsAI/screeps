@@ -9,6 +9,16 @@ import { Post } from '../posts/Post';
 // import { RolePriority } from '../enums/priority';
 // import { RoleType } from '../enums/creep';
 
+type SpawnCreateOrder = {
+	id: number;
+	spawn: StructureSpawn;
+	spawnId: string;
+	name: string;
+	body: BodyPartConstant[];
+	options: object;
+	status: number;
+};
+
 /**
  * Spawn管理器
  * 也负责管理creep生产线
@@ -16,31 +26,55 @@ import { Post } from '../posts/Post';
  * 生产完毕后会从Memory中删除
  */
 export class SpawnManager extends Manager {
-
+	orders: object;
 	constructor() {
 		super('spawn');
 	}
 
 	/**
 	 * 一个creep生产订单的结构
-	 * spawnId 被分配生产任务的Spawn的Id
-	 * name creep的名字
-	 * body
-	 * option {
-	 * 		posts:{}, 新Creep的工作合同列表，仅存贮合同id
+	 * {
+	 * 		id: (new Date()).getTime(),
+	 * 		spawnId:, 被分配生产任务的Spawn的Id
+	 * 		name:, creep的名字
+	 * 		body,
+	 * 		option: {
+	 * 			posts:{}, 新Creep的工作合同列表，仅存贮合同id
+	 * 		},
+	 * 		status:, 订单状态，0：已完成，1：进行中，2：排队中，3：待删除
 	 * }
-	 * status 订单状态，0：已完成，1：进行中，2：排队中，3：待删除
 	 */
+
+
+	/**
+	 * 处理Creep生产队列
+	 */
+	dealwithCreateOrder() {
+		const that = this;
+		const orders = _.filter(this.orders, (o) => o.status === 0);
+		_.forEach(orders, (order: SpawnCreateOrder) => {
+			const { spawn, name, body, options, id } = order;
+			if (spawn && !spawn.spawning && that.memory.orders[id]) {
+				if (spawn.spawnCreep(body, name, { dryRun: true })) {
+					that.memory.orders[id].status = 1;
+					spawn.spawnCreep(body, name, options);
+					return false;
+				}
+			}
+		});
+	}
 
 	/**
 	 * 添加一个生产Creep的订单
 	 */
-	addCreateOrder(obj: any) {
-		if (this.memory.entries[obj.id] === undefined) {
-			this.memory.entries[obj.id] = obj;
-		}
-		this.entries[obj.id] = obj;
-		return this.entries;
+	addCreatorOrder(order: any) {
+		// if (this.memory.createOrder[obj.id] === undefined) {
+		const { id, spawn, name, body, option, status } = order
+		this.memory.orders[id] = {
+			id, spawnId: spawn.id, name, body, option, status,
+		};
+		this.orders[id] = order;
+		return this.orders;
 	}
 
 
@@ -48,18 +82,22 @@ export class SpawnManager extends Manager {
 	 * 使用合同信息来生产creep
 	 * @param post 
 	 */
-	createCreepByPost(post: Post) {
+	createOrderByPost(post: Post) {
 		// 查找里目标最近的spawn
-		const spawn = this.findTargetSpawn(post.target[0]);
-		this.addCreateOrder({
-			spawnId: spawn.id,
-			name: post.postType + '-' + (new Date()).getTime(),
-			body: post.bodyNeed,
-			option: {
-				posts: {},
-			},
-			status: 2, // 排队中
-		});
+		if (post.target && post.target.length > 0 && post.options['status'] < 1) {
+			post.options['status'] += 1;
+			const spawn = this.findTargetSpawn(post.target[0]);
+			this.addCreatorOrder({
+				id: (new Date()).getTime(),
+				spawn: spawn,
+				name: post.postType + '-' + (new Date()).getTime(),
+				body: post.bodyNeed,
+				options: {
+					posts: [post.id],
+				},
+				status: 0, // 排队中
+			});
+		}
 	}
 
 
@@ -84,7 +122,26 @@ export class SpawnManager extends Manager {
 		return spawn;
 	}
 
-	public clean() { }
+	// public clean() { }
+
+	/**
+	 * 是指从Memory恢复数据到global中
+	 */
+	rebootFromMemory(): void {
+		// spawn
+		const that = this;
+		super.rebootFromMemory();
+		// order
+		this.orders = {}
+		_.forEach(this.memory.orders, (order: SpawnCreateOrder) => {
+			const { id, spawnId, name, options, status, body } = order;
+			that.orders[id] = {
+				spawn: Game.getObjectById(spawnId),
+				name, options, status, body, id,
+			}
+		});
+		Log.success(`Reboot ${_.padEnd(that.name + ' ' + 'Order', 20, ' ')} have ${Object.keys(that.orders).length} orders`);
+	}
 	// private buildSpawnOrder(room: Room): void {
 	// _.forEach(Setups, setup => {
 	// 	const RclSetup = setup.run(room);

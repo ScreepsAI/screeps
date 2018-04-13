@@ -31,29 +31,38 @@ export abstract class Manager {
 
 		// 初始化 memory 容器
 		if (_.isUndefined(Memory.Managers)) Memory.Managers = {};
-		if (_.isUndefined(Memory.Managers[this.name])) {
+		if (_.isUndefined(this.memory)) {
 			this.caches = {};
 			this.memory = {};
 			this.memory.entries = {};
-		} else {
-			_.each(Object.keys(this.memory.entries), id => {
-				const entry = Game.getObjectById(id);
-				if (entry) this.addEntry(entry);
-				else delete this.memory.entries[id];
-			});
 		}
+		this.clean();
+		this.rebootFromMemory();
 	}
 
 	/**
 	 * 是指清理Manager的entries列表中存在但是游戏中不存在的对象
 	 */
-	abstract clean(): void;
+	clean() {
+		_.forEach(Object.keys(this.memory.entries), (id) => {
+			const e = Game.getObjectById(id);
+			if (!e) delete this.memory.entries[id];
+		});
+	}
 
 	/**
 	 * 是指从Memory恢复数据到global中
 	 */
-	// abstract rebootFromMemory(): void;
+	rebootFromMemory(): void {
+		const that = this;
+		this.entries = {};
+		_.forEach(Object.keys(this.memory.entries), (id) => {
+			that.entries[id] = Game.getObjectById(id);
+		})
+		Log.success(`Reboot ${_.padEnd(that.name, 20, ' ')} have ${Object.keys(that.entries).length} entries`);
+	}
 
+	// 运行时缓存
 	get caches() {
 		return global.caches[this.cacheName];
 	}

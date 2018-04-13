@@ -248,16 +248,16 @@ Object.defineProperties(Room.prototype, {
 // };
 
 const roomFilter = function(o: Creep | OwnedStructure) {
-	return o.room.name === this.name;
+	return o && o.room.name === this.name;
 };
 const myFilter = function(o: Creep | OwnedStructure) {
-	return o.room.name === this.name && o.my;
+	return o && o.room.name === this.name && o.my;
 };
 const allyFilter = function(o: Creep | OwnedStructure) {
-	return o.room.name === this.name && Memory.config.WHITELIST.indexOf(o.owner.username) >= 0;
+	return o && o.room.name === this.name && Memory.config.WHITELIST.indexOf(o.owner.username) >= 0;
 };
 const hostileFilter = function(o: Creep | OwnedStructure) {
-	return o.room.name === this.name && !o.my && Memory.config.WHITELIST.indexOf(o.owner.username) < 0;
+	return o && o.room.name === this.name && !o.my && Memory.config.WHITELIST.indexOf(o.owner.username) < 0;
 };
 define(Room.prototype, {
 	/**

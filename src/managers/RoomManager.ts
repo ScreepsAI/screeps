@@ -86,8 +86,10 @@ export class RoomManager {
 		return this.entries[id];
 	}
 
-	addEntry(obj: Room): RoomObject[] {
-		this.memory.entries[obj.name] = {};
+	addEntry(room: Room): RoomObject[] {
+		this.memory.entries[room.name] = {
+			my:room.my,
+		};
 		return this.entries;
 	}
 
@@ -122,9 +124,7 @@ export class RoomManager {
 			 */
 			const energy = room.energy;
 			const energyCapacity = room.energyCapacity;
-			// console.log(energy, energyCapacity, energy / energyCapacity < 0.9)
-			if (energy / energyCapacity < 0.9 || energyCapacity === 300) {
-				// 如果能量储量小于90%
+			if (energy / energyCapacity < 0.9 || energyCapacity === 300) {// 如果能量储量小于90%
 				/**
 				 * SourceManager
 				 * 检查矿点工位是否已满
@@ -133,10 +133,14 @@ export class RoomManager {
 					const adjacents = source.accessibleFields; // 获取空的工位列表
 					// console.log(adjacents);
 					// 由SourceManager保存和发布工位招领信息
-					global.SourceManager.createPost(undefined, [source], adjacents);
+					if (adjacents.length - source.posts.length > 0) { // 判断是否需要配置新的岗位
+						global.SourceManager.createPost(undefined, [source], adjacents);
+					}
 				});
-				
+
 				/**
+				 * 暂时跳过
+				 * ==============================================
 				 * PostManager
 				 * 检查并筛选出是否有空的合同
 				 * 如合同工已经亡故
@@ -156,7 +160,12 @@ export class RoomManager {
 				 * 检查是否还有空的岗位
 				 * 有的话，创造Creep来填补空缺岗位
 				 */
-				// global.PostManager.dealWithNoPosterPost();
+				global.PostManager.dealwithNoPosterPosts();
+
+				/**
+				 * 各个拥有order的manager检查并处理order列表
+				 * SpawnManager
+				 */
 
 			}
 		});
@@ -205,7 +214,7 @@ export class RoomManager {
 	// this.recordUpdateTime();
 	// }
 
-	public clean(): void {
+	// public clean(): void {
 		// if (_.isUndefined(Memory.rooms)) Memory.rooms = {};
 		// _.forEach(Object.keys(Memory.rooms), (roomMemory: any, name: string) => {
 		//   if (Object.keys(roomMemory).length === 0) {
@@ -217,7 +226,7 @@ export class RoomManager {
 		//     delete Memory.rooms[name];
 		//   }
 		// });
-	}
+	// }
 
 	// private buildRoomToc(room: Room): void {
 	// 	room.memory.time = Game.time;

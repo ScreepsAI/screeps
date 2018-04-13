@@ -29,7 +29,7 @@ export class CreepManager extends Manager {
 	// }
 	//
 
-	public clean(): void {
+	// public clean(): void {
 		// _.forEach(Memory.creeps, (creep: CreepMemory, name: string) => {
 		// if (!Game.creeps[name]) {
 		// 	if (creep.hasBorn) {
@@ -43,5 +43,5 @@ export class CreepManager extends Manager {
 		// 	}
 		// }
 		// });
-	}
+	// }
 }

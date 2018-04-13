@@ -20,5 +20,5 @@ export class ConstructionSiteManager extends Manager {
 	//     return this.entries;
 	// }
 
-	clean() {}
+	// clean() {}
 }

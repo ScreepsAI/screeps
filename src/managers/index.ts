@@ -14,13 +14,13 @@ import { PostManager } from './PostManager';
 export const InitManager = () => {
 	const ManagerList: Manager[] = [
 		new ControllerManager(),
+		new PostManager(),
 		new SourceManager(),
 		new SpawnManager(),
 		new ExtensionManager(),
 		new ConstructionSiteManager(),
 		new ContainerManager(),
 		new CreepManager(),
-		new PostManager(),
 	];
 
 	global.RoomManager = new RoomManager();
