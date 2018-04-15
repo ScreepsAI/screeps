@@ -2,7 +2,7 @@
 
 Object.defineProperties(RoomPosition.prototype, {
 	raw: {
-		get(): Pos {
+		get(): RawPos {
 			return {
 				x: this.x,
 				y: this.y,
@@ -20,14 +20,6 @@ Object.defineProperties(RoomPosition.prototype, {
 		enumerable: true,
 		get: function () { return this.look(); },
 	},
-	// memory: {
-	// 	get(): any {
-	// 		return this.room.memory;
-	// 	},
-	// 	set(value): void {
-	// 		this.room.memory = value;
-	// 	},
-	// },
 	terrain: {
 		configurable: true,
 		enumerable: true,
@@ -77,34 +69,42 @@ Object.defineProperties(RoomPosition.prototype, {
 // Functions
 // ////////////////////////////////
 
-RoomPosition.prototype.getRawAdjacent = function (range: number = 1): any[] {
-	const rawAdjacentPos = [];
+/**
+ * 获取坐标点为中心，range为半径的正方形范围内的有效坐标对象数组
+ */
+RoomPosition.prototype.getAdjacent = function (range: number = 1): RoomPosition[] {
+	const adjacentPos = [];
 	for (let _x = -range; _x <= range; _x++) {
 		for (let _y = -range; _y <= range; _y++) {
 			const x = this.x + _x;
 			const y = this.y + _y;
 			if (_x === 0 && _y === 0) continue;
-			if (x >= 0 && x <= 49 && y >= 0 && y <= 49) rawAdjacentPos.push(new RoomPosition(x, y, this.roomName).raw);
+			if (x >= 0 && x <= 49 && y >= 0 && y <= 49) adjacentPos.push(new RoomPosition(x, y, this.roomName));
 		}
 	}
-	return rawAdjacentPos;
+	return adjacentPos;
 };
 
-RoomPosition.prototype.getAdjacent = function (range: number = 1): RoomPosition[] {
-	return _.map(this.getRawAdjacent(range), (p) => new RoomPosition(p.x, p.y, p.roomName));
+/**
+ * 获取坐标点为中心，range为半径的正方形范围内的有效坐标对象的字面量数组
+ */
+RoomPosition.prototype.getRawAdjacent = function (range: number = 1): any[] {
+	return _.map(this.getAdjacent(range), (p) => p.raw);
 };
 
+/**
+ * 获取坐标点为中心，range为半径的正方形范围内不是墙体的坐标对象数据
+ */
 RoomPosition.prototype.getAccessibleFields = function (range: number = 1): RoomPosition[] {
 	return  _.filter(this.getAdjacent(range), (pos) => pos.terrain != 'wall');
 };
 
+/**
+ * 获取坐标点为中心，range为半径的正方形范围内不是墙体的坐标对象字面量数据
+ */
 RoomPosition.prototype.getRawAccessibleFields = function (range: number = 1): RoomPosition[] {
 	return _.map(this.getAccessibleFields(range), (p) => p.raw);
 };
-
-// RoomPosition.prototype.getStructure = function(type: StructureConstant): Structure | undefined {
-// 	return _.filter(this.structures, (s: Structure) => s.structureType === type)[0];
-// };
 
 // RoomPosition.prototype.getPositionInDirection = function(direction: number): RoomPosition {
 // 	switch (direction) {
@@ -127,41 +127,4 @@ RoomPosition.prototype.getRawAccessibleFields = function (range: number = 1): Ro
 // 		default:
 // 			return new RoomPosition(this.x, this.y, this.roomName);
 // 	}
-// };
-
-// RoomPosition.prototype.cacheLookFor = function(type: LookConstant, timeout: number = 1): any[] {
-// 	if (type === LOOK_TERRAIN) timeout = 60;
-
-// 	const pos = `X${this.x}Y${this.y}`;
-// 	const cacheResult = _.get(Memory, ['_lookFor', pos, type]) as LookForCache;
-
-// 	if (!_.isUndefined(cacheResult) && Game.time - cacheResult.time <= timeout) {
-// 		switch (type) {
-// 			case LOOK_TERRAIN:
-// 				return cacheResult.value;
-// 			case LOOK_FLAGS:
-// 				return getGame.flagsByNameArray(cacheResult.value);
-// 			default:
-// 				return getGame.objsByIdArray(cacheResult.value);
-// 		}
-// 	}
-// 	const result = this.lookFor(type);
-// 	let value: any[];
-// 	console.log(type, LOOK_TERRAIN);
-// 	switch (type) {
-// 		case LOOK_TERRAIN:
-// 			value = result[0];
-// 			break;
-// 		case LOOK_FLAGS:
-// 			value = getGame.flagsToNameArray(result);
-// 			break;
-// 		default:
-// 			value = getGame.objsToIdArray(result);
-// 			break;
-// 	}
-// 	_.set(Memory, ['_lookFor', pos, type], {
-// 		time: Game.time,
-// 		value: value,
-// 	});
-// 	return result;
 // };

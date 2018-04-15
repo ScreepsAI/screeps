@@ -1,3 +1,0 @@
-// interface RoomObject {
-// 	targetOf: number;
-// }

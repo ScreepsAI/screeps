@@ -6,7 +6,7 @@ import { InitManager } from './managers';
  */
 export const Reboot = (): void => {
 	// 运行时环境，内存或者设置只要有一个需要初始化就执行初始化流程
-	global.hasRoot = true;
+	global['hasRoot'] = true;
 	console.log(String.fromCodePoint(0x1f503), 'Code Reloading ...');
 
 	/**
@@ -14,13 +14,13 @@ export const Reboot = (): void => {
 	 * manager，Define中设计了缓存单帧管理
 	 */
 	// global.Managers = {};
-	global.caches = {
+	global['caches'] = {
 		rooms: {},
 	};
 
 	// Assign config
-	global.myName = getUsername();
-	if (Memory.config) Memory.config = { CONTROLLER_SIGN_MESSAGE: `Sign by ${global.myName}` };
+	global['myName'] = getUsername();
+	if (Memory.config) Memory.config = { CONTROLLER_SIGN_MESSAGE: `Sign by ${global['myName']}` };
 	// 不要改 config 引用路径（打包时候不会引入）
 	Object.assign(Memory.config, require('config'));
 	Object.assign(global, Memory.config);
@@ -32,7 +32,7 @@ export const Reboot = (): void => {
 	require('./global');
 
 	InitManager();
-	global.RoomManager.statistic(true);
+	RoomManager.statistic(true);
 
 	// new Clock('clock1', {counter: 1}, function(params: any) {
 	//   if (params.counter % 10 === 0) params.counter = 0;

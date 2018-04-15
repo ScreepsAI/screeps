@@ -55,7 +55,8 @@ export class SpawnManager extends Manager {
 		_.forEach(orders, (order: SpawnCreateOrder) => {
 			const { spawn, name, body, options, id } = order;
 			if (spawn && !spawn.spawning && that.memory.orders[id]) {
-				if (spawn.spawnCreep(body, name, { dryRun: true })) {
+				global.console.log(spawn.spawnCreep(body, name, { dryRun: true }));
+				if (spawn.spawnCreep(body, name, { dryRun: true }) === OK) {
 					that.memory.orders[id].status = 1;
 					spawn.spawnCreep(body, name, options);
 					return false;
@@ -82,7 +83,7 @@ export class SpawnManager extends Manager {
 	 * 使用合同信息来生产creep
 	 * @param post 
 	 */
-	createOrderByPost(post: Post) {
+	createOrderByPost(post: Post): void {
 		// 查找里目标最近的spawn
 		if (post.target && post.target.length > 0 && post.options['status'] < 1) {
 			post.options['status'] += 1;

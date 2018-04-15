@@ -1,35 +1,23 @@
-interface LookForCache {
-	time: number;
-	value: any[];
-}
-
-interface Pos {
+/**
+ * RoomPosition的字面量对象
+ */
+interface RawPosition {
 	x: number;
 	y: number;
 	roomName: string;
 }
 
 interface RoomPosition {
-	raw: Pos;
+	raw: RawPosition;
 	room: Room;
-	memory: RoomMemory;
 	terrain: Terrain;
 	structures: Structure[];
-	mainStructure: Structure | undefined;
-	constructionSite: ConstructionSite | undefined;
-	creep: Creep | undefined;
-	canMoveThrough: boolean;
-	canBuild: boolean;
 
-	getAdjacent(range?: number): RoomPosition[];
-	getRawAdjacent(range?: number): any[];
+	getAdjacent(range?: number): RoomPosition[]; // 获取坐标点为中心，range为半径的正方形范围内的有效坐标对象数组
 
-	getAccessibleFields(range?: number): RoomPosition[];
-	getRawAccessibleFields(range?: number): any[];
+	getRawAdjacent(range?: number): any[]; // 获取坐标点为中心，range为半径的正方形范围内的有效坐标对象的字面量数组
 
-	// getStructure(type: StructureConstant): Structure | undefined;
+	getAccessibleFields(range?: number): RoomPosition[]; // 获取坐标点为中心，range为半径的正方形范围内不是墙体的坐标对象数据
 
-	// getPositionInDirection(direction: number): RoomPosition;
-
-	// cacheLookFor(type: LookConstant, timeout?: number): any[];
+	getRawAccessibleFields(range?: number): any[]; // 获取坐标点为中心，range为半径的正方形范围内不是墙体的坐标对象字面量数据
 }

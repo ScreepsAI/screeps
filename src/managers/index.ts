@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
 import { Manager } from './Manager';
-// import { CreepManager } from './CreepManager';
 import { RoomManager } from './RoomManager';
 import { ControllerManager } from './ControllerManager';
 import { SourceManager } from './SourceManager';
@@ -23,8 +22,9 @@ export const InitManager = () => {
 		new CreepManager(),
 	];
 
-	global.RoomManager = new RoomManager();
+	global['RoomManager'] = new RoomManager();
 	_.each(ManagerList, (manager: Manager) => {
 		global[manager.name + 'Manager'] = manager;
 	});
 };
+

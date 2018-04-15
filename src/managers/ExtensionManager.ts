@@ -9,15 +9,4 @@ export class ExtensionManager extends Manager {
 	constructor() {
 		super('extension');
 	}
-
-	// addEntry(obj: StructureExtension) {
-	//     this.memory.entries[obj.id] = {
-	//         id: obj.id,
-	//         room: obj.room.name,
-	//         my: obj.my,
-	// 		owner: obj.owner,
-	//     };
-	//     return this.entries;
-	// }
-
 }

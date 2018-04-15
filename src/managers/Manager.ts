@@ -64,11 +64,11 @@ export abstract class Manager {
 
 	// 运行时缓存
 	get caches() {
-		return global.caches[this.cacheName];
+		return caches[this.cacheName];
 	}
 
 	set caches(v) {
-		global.caches[this.cacheName] = v;
+		caches[this.cacheName] = v;
 	}
 
 	get memory(): any {
@@ -105,7 +105,7 @@ export abstract class Manager {
 		if (!this.caches._ally.data || this.caches._ally.time < Game.time) {
 			this.caches._ally.data = _.filter(this.entries, entry => {
 				if (entry instanceof Creep || entry instanceof OwnedStructure) {
-					if (entry.owner) return global.WHITELIST.indexOf(entry.owner.username) >= 0;
+					if (entry.owner) return WHITELIST.indexOf(entry.owner.username) >= 0;
 					else return false;
 				}
 				return false;
@@ -120,7 +120,7 @@ export abstract class Manager {
 		if (!this.caches._hostile.data || this.caches._hostile.time < Game.time) {
 			this.caches._hostile.data = _.filter(this.entries, entry => {
 				if (entry instanceof Creep || entry instanceof OwnedStructure) {
-					if (entry.owner) return global.WHITELIST.indexOf(entry.owner.username) < 0;
+					if (entry.owner) return WHITELIST.indexOf(entry.owner.username) < 0;
 					else return false;
 				}
 				return false;
@@ -131,23 +131,22 @@ export abstract class Manager {
 	}
 
 	// 获取该管理器管理的对象
-	get(id: string): IdObject | undefined {
+	getEntry(id: string): IdObject | undefined {
 		return this.entries[id];
 	}
 
-	getMemory(id: string) {
+	getEntryFromMemory(id: string): any {
 		return this.memory.entries[id];
 	}
 
-	addEntry(obj: any) {
+	addEntry(obj: any): void {
 		if (this.memory.entries[obj.id] === undefined) {
 			this.memory.entries[obj.id] = true;
 		}
 		this.entries[obj.id] = obj;
-		return this.entries;
 	}
 
-	addEntries(objs: any[]) {
+	addEntries(objs: any[]): void {
 		if (_.isArray(objs)) {
 			_.each(objs, obj => this.addEntry(obj));
 		}

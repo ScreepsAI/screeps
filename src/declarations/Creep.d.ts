@@ -8,11 +8,11 @@ interface CreepMemory {
 	action?: string;
 }
 
-interface CreepOrder {
-	priority: number;
-	body: BodyPartConstant[];
-	memory: CreepMemory;
-}
+// interface CreepOrder {
+// 	priority: number;
+// 	body: BodyPartConstant[];
+// 	memory: CreepMemory;
+// }
 
 interface Creep {
 	role: number;

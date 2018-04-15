@@ -38,7 +38,7 @@ export class PostManager extends Manager {
 	 * 记录合同内容
      * @param {Post} post
 	 */
-    addPost(post: Post) {
+    addPost(post: Post): void {
         this.entries[post.id] = post;
         this.memory.entries[post.id] = post.raw;
     }
@@ -47,9 +47,9 @@ export class PostManager extends Manager {
      * 用目标id查询相关合同
      * @param targetId 
      */
-    getByTarget(targetId: string) {
+    getByTarget(targetId: string): Post[] | undefined {
         if (targetId) return _.filter(this.entries, (p) => p.targetId && p.targetId.indexOf(targetId) >= 0);
-        else return false;
+        else return;
     }
 
     /**
@@ -65,9 +65,9 @@ export class PostManager extends Manager {
      * 处理无人在岗的合同
      * 安排生产新的creep来填补岗位
      */
-    dealwithNoPosterPosts() {
-        _.forEach(this.noPosterPosts, (post: any) => {
-            global.SpawnManager.createOrderByPost(post);
+    dealwithNoPosterPosts(): void {
+        _.forEach(this.noPosterPosts, (post: Post) => {
+            SpawnManager.createOrderByPost(post);
         });
     }
 

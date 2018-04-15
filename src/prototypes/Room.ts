@@ -292,20 +292,20 @@ define(Room.prototype, {
 	source: {
 		kinds: [],
 		filter: function() {
-			return _.filter(global.SourceManager.entries, roomFilter.bind(this));
+			return _.filter(SourceManager.entries, roomFilter.bind(this));
 		},
 	},
 	spawn: {
 		kinds: ['my', 'ally', 'hostile'],
 		filter: {
 			my: function() {
-				return _.filter(global.SpawnManager.entries, myFilter.bind(this));
+				return _.filter(SpawnManager.entries, myFilter.bind(this));
 			},
 			ally: function() {
-				return _.filter(global.SpawnManager.entries, allyFilter.bind(this));
+				return _.filter(SpawnManager.entries, allyFilter.bind(this));
 			},
 			hostile: function() {
-				return _.filter(global.SpawnManager.entries, hostileFilter.bind(this));
+				return _.filter(SpawnManager.entries, hostileFilter.bind(this));
 			},
 		},
 	},
@@ -313,13 +313,13 @@ define(Room.prototype, {
 		kinds: ['my', 'ally', 'hostile'],
 		filter: {
 			my: function() {
-				return _.filter(global.ExtensionManager.entries, myFilter.bind(this));
+				return _.filter(ExtensionManager.entries, myFilter.bind(this));
 			},
 			ally: function() {
-				return _.filter(global.ExtensionManager.entries, allyFilter.bind(this));
+				return _.filter(ExtensionManager.entries, allyFilter.bind(this));
 			},
 			hostile: function() {
-				return _.filter(global.ExtensionManager.entries, hostileFilter.bind(this));
+				return _.filter(ExtensionManager.entries, hostileFilter.bind(this));
 			},
 		},
 	},
@@ -327,13 +327,13 @@ define(Room.prototype, {
 		kinds: ['my', 'ally', 'hostile'],
 		filter: {
 			my: function() {
-				return _.filter(global.ConstructionSiteManager.entries, myFilter.bind(this));
+				return _.filter(ConstructionSiteManager.entries, myFilter.bind(this));
 			},
 			ally: function() {
-				return _.filter(global.ConstructionSiteManager.entries, allyFilter.bind(this));
+				return _.filter(ConstructionSiteManager.entries, allyFilter.bind(this));
 			},
 			hostile: function() {
-				return _.filter(global.ConstructionSiteManager.entries, hostileFilter.bind(this));
+				return _.filter(ConstructionSiteManager.entries, hostileFilter.bind(this));
 			},
 		},
 	},

@@ -6,7 +6,7 @@ Object.defineProperties(Source.prototype, {
 	},
 	accessibleFields: {
 		get: function() {
-			const memory = global.SourceManager.getMemory(this.id);
+			const memory = SourceManager.getEntryFromMemory(this.id);
 			if (memory && !memory.accessibleFields) memory.accessibleFields = this.pos.getAccessibleFields();
 
 			return memory.accessibleFields;
@@ -14,7 +14,7 @@ Object.defineProperties(Source.prototype, {
 	},
 	maxPosts: {
 		get: function() {
-			const memory = global.SourceManager.getMemory(this.id);
+			const memory = SourceManager.getEntryFromMemory(this.id);
 			if (memory && !memory.maxPosts) memory.maxPosts = this.accessibleFields.length;
 
 			return memory.maxPosts;
@@ -22,7 +22,7 @@ Object.defineProperties(Source.prototype, {
 	},
 	posts: {
 		get: function() {
-			return global.PostManager.getByTarget(this.id);
+			return PostManager.getByTarget(this.id);
 		}
 	}
 	// memory: {

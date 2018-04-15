@@ -57,11 +57,11 @@ export class SourceManager extends Manager {
    *    status: 'not-dealwith',
    * }
 	 */
-  createPost(poster: Creep[], target: Source[], adjacents: RoomPosition[]) {
+  createPost(poster: Creep[], target: Source[], adjacents: RoomPosition[]): void {
     _.forEach(adjacents, () => { // 暂时不记录固定工位
       const minerPost = new MinerPost(poster, target);
       minerPost.options['status'] = 0;
-      global.PostManager.addPost(minerPost);
+      PostManager.addPost(minerPost);
     });
   }
 
@@ -69,7 +69,7 @@ export class SourceManager extends Manager {
 	 * 给予任务
 	 * @param creep
 	 */
-  givePost(creep: Creep) { }
+  // givePost(creep: Creep) { }
 
 	/**
 	 * 清理工位信息，确认每个工位是否已经被存在的creep招领

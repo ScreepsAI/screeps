@@ -3,6 +3,9 @@ import * as _ from 'lodash';
 // import { RoleType } from '../enums/creep';
 // import { ActionType } from '../enums/action';
 
+/**
+ * Creep
+ */
 Object.defineProperties(Creep.prototype, {
 	/**
 	 * 签订的合同列表
@@ -12,11 +15,6 @@ Object.defineProperties(Creep.prototype, {
 		get() {
 			return this.memory.posts;
 		},
-	},
-	takePost: {
-		value: function() {
-			
-		}
 	},
 	// homeRoom: {
 	// 	get(): Room {
