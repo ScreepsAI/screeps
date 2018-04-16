@@ -39,7 +39,12 @@ export class SpawnManager extends Manager {
 	 * 		name:, creep的名字
 	 * 		body,
 	 * 		option: {
-	 * 			posts:{}, 新Creep的工作合同列表，仅存贮合同id
+	 * 			posts:{
+	 * 				postId: {
+	 * 					status:,
+	 * 					...rest,
+	 * 				}
+	 * 			}, 新Creep的工作合同列表，仅存贮合同id
 	 * 		},
 	 * 		status:, 订单状态，0：已完成，1：进行中，2：排队中，3：待删除
 	 * }
@@ -55,7 +60,7 @@ export class SpawnManager extends Manager {
 		_.forEach(orders, (order: SpawnCreateOrder) => {
 			const { spawn, name, body, options, id } = order;
 			if (spawn && !spawn.spawning && that.memory.orders[id]) {
-				global.console.log(spawn.spawnCreep(body, name, { dryRun: true }));
+				// console.log(spawn.spawnCreep(body, name, { dryRun: true }));
 				if (spawn.spawnCreep(body, name, { dryRun: true }) === OK) {
 					that.memory.orders[id].status = 1;
 					spawn.spawnCreep(body, name, options);
@@ -94,7 +99,9 @@ export class SpawnManager extends Manager {
 				name: post.postType + '-' + (new Date()).getTime(),
 				body: post.bodyNeed,
 				options: {
-					posts: [post.id],
+					posts: {
+						[post.id]: post.options,
+					},
 				},
 				status: 0, // 排队中
 			});
@@ -103,8 +110,8 @@ export class SpawnManager extends Manager {
 
 
 	/**
-	 * 
-	 * @param target 查找离目标最近的Spawn
+	 * 查找离目标最近的Spawn
+	 * @param target 
 	 */
 	findTargetSpawn(target: any): StructureSpawn {
 		let tempRoom: Room = target.room;

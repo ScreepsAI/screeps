@@ -8,7 +8,7 @@ export const Loop = ErrorMapper.wrapLoop(() => {
 		/**
 		 * Reboot
 		 */
-		if (!hasRoot) Reboot();
+		if (!global['hasRoot']) Reboot();
 		Clocks.tick();
 
 		/**
@@ -32,8 +32,7 @@ export const Loop = ErrorMapper.wrapLoop(() => {
 			 */
 		});
 	} catch (e) {
-		// console.log(e.stack || e.message);
-		Log.error(e.stack || e.message);
+		console.log(e.stack || e.message);
 		// global.hasRoot = false;
 	}
 });

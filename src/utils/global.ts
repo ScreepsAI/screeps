@@ -29,7 +29,7 @@ export const define = function (target: any, extendObject: any): void {
 				configurable: true,
 				enumerable: true,
 				get: function () {
-					let room = global.caches.rooms[this.name];
+					let room = caches.rooms[this.name];
 					if (!room) room = {};
 					if (!room[_iK]) room[_iK] = {};
 					if (!room[_iK].data || room[_iK].time < Game.time) {

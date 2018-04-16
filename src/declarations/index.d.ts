@@ -25,7 +25,7 @@ declare function Dye(style: string | number, ...text: any[]): string;
 
 declare const getObjByIds: Function;
 declare const toIds: Function;
-declare const caches: object;
+declare const caches: any;
 declare const WHITELIST: string[];
 declare const ME: string;
 declare const CONTROLLER_SIGN_MESSAGE: string;

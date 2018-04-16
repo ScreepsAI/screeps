@@ -9,6 +9,7 @@ import { ConstructionSiteManager } from './ConstructionSiteManager';
 import { ContainerManager } from './ContainerManager';
 import { CreepManager } from './CreepManager';
 import { PostManager } from './PostManager';
+import { PathManager } from './PathManager';
 
 export const InitManager = () => {
 	const ManagerList: Manager[] = [
@@ -20,6 +21,7 @@ export const InitManager = () => {
 		new ConstructionSiteManager(),
 		new ContainerManager(),
 		new CreepManager(),
+		new PathManager(),
 	];
 
 	global['RoomManager'] = new RoomManager();

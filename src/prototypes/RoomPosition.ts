@@ -2,7 +2,7 @@
 
 Object.defineProperties(RoomPosition.prototype, {
 	raw: {
-		get(): RawPos {
+		get(): RawPosition {
 			return {
 				x: this.x,
 				y: this.y,

@@ -90,7 +90,7 @@ export class PostManager extends Manager {
         this.entries = {};
         _.forEach(this.memory.entries, (post) => {
             const { postType, posterId: poster, targetId: target, bodyNeed, id, options } = post;
-            that.entries[id] = new Post(postType, poster, target, bodyNeed, id, options);
+            that.entries[id] = new Post(postType, poster, target, bodyNeed, options, id);
         });
         Log.success(`Reboot ${_.padEnd(that.name, 20, ' ')} have ${Object.keys(that.entries).length} posts`);
     }

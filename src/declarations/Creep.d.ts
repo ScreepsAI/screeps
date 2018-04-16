@@ -1,34 +1,17 @@
 interface CreepMemory {
 	name?: string;
-	role: number;
-	homeRoom: string;
-	hasBorn?: boolean;
-	target?: string | null;
-	targetType?: number | null;
-	action?: string;
+	posts?: any;
+	// role: number;
+	// homeRoom: string;
+	// hasBorn?: boolean;
+	// target?: string | null;
+	// targetType?: number | null;
+	// action?: string;
 }
 
-// interface CreepOrder {
-// 	priority: number;
-// 	body: BodyPartConstant[];
-// 	memory: CreepMemory;
-// }
-
 interface Creep {
-	role: number;
-	homeRoom: Room;
-	isInHomeRoom: boolean;
-	action: string;
-	target: RoomObject | Flag | Room | undefined;
-	totalCarry: number;
-	isEmpty: boolean;
-	isFull: boolean;
-	missingHits: number;
+	posts: any;
 	isHurt: boolean;
-
-	setTarget(target: RoomObject | Flag | Room): void;
-
-	setAction(action: string): void;
 
 	getBodyparts(partTypes: BodyPartConstant): number;
 

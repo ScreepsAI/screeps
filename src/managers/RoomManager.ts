@@ -8,6 +8,9 @@ import * as _ from 'lodash';
  * 负责初始化所有房间的数据，并存储到Memory中
  * Memory.Managers.Room = {
  *    entries: {
+ * 		[roomName]: {
+ * 			my:,
+ * 		}
  *    }
  *    statisticTime:,
  * }
@@ -15,11 +18,21 @@ import * as _ from 'lodash';
 export class RoomManager {
 	public name: string;
 	public cacheName: string;
+	public entries: any;
 
 	constructor() {
 		this.name = 'Room';
 		this.cacheName = 'RoomCaches';
-		this.init();
+		this.entries = {};
+		if (!Memory.Managers) Memory.Managers = {};
+		if (!Memory.Managers.Room) {
+			this.caches = {};
+			this.memory = {
+				entries: {},
+				statisticTime: undefined,
+			};
+		}
+		this.rebootFromMemory();
 	}
 
 	get caches() {
@@ -36,10 +49,6 @@ export class RoomManager {
 
 	set memory(value: any) {
 		Memory.Managers[this.name] = value;
-	}
-
-	get entries() {
-		return this.memory.entries;
 	}
 
 	/**
@@ -82,31 +91,21 @@ export class RoomManager {
 	}
 
 	// 获取该管理器管理的对象
-	getEntry(id: string): IdObject | undefined {
-		return this.entries[id];
+	getEntry(roomName: string): IdObject | undefined {
+		return this.entries[roomName];
 	}
 
-	addEntry(room: Room): RoomObject[] {
+	addEntry(room: Room): void {
 		this.memory.entries[room.name] = {
-			my:room.my,
+			my: room.my,
 		};
-		return this.entries;
+		this.entries[room.name] = room;
 	}
 
-	addEntries(objs: IdObject[]) {
-		if (_.isArray(objs)) {
-			_.each(objs, obj => (this.entries[obj.id] = obj));
-		}
-	}
-
-	init() {
-		if (!Memory.Managers) Memory.Managers = {};
-		if (!Memory.Managers.Room) {
-			this.caches = {};
-			this.memory = {
-				entries: {},
-				statisticTime: undefined,
-			};
+	addEntries(rooms: IdObject[]) {
+		if (_.isArray(rooms)) {
+			const that = this;
+			_.map(rooms, (room: Room) => that.addEntry(room));
 		}
 	}
 
@@ -167,10 +166,10 @@ export class RoomManager {
 				 * SpawnManager
 				 */
 
-				 /**
-				  * 遍历所有creep和主动行为对象(tower之类的)
-				  * 并处理他们的post列表
-				  */
+				/**
+				 * 遍历所有creep和主动行为对象(tower之类的)
+				 * 并处理他们的post列表
+				 */
 			}
 		});
 	}
@@ -189,11 +188,11 @@ export class RoomManager {
 	statistic(complete = false): void {
 		const that = this;
 		_.map(Game.rooms, room => {
-			//
 			if (complete) {
 				that.addEntry(room);
 				// source
 				SourceManager.addEntries(room.find(FIND_SOURCES));
+				// path from container to source
 			}
 
 			/**
@@ -206,5 +205,19 @@ export class RoomManager {
 				}
 			});
 		});
+	}
+
+
+	/**
+	 * 是指从Memory恢复数据到global中
+	 */
+	rebootFromMemory(): void {
+		const that = this;
+		// this.entries = {};
+		_.forEach(this.memory.entries, (roomData, roomName) => {
+			if (roomName in Game.rooms) that.entries[roomName] = roomData;
+			else this.memory.entries[roomName]['my'] = false;
+		})
+		Log.success(`Reboot ${_.padEnd(that.name, 20, ' ')} have ${Object.keys(that.entries).length} entries`);
 	}
 }

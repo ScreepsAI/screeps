@@ -57,10 +57,10 @@ class Clock {
 				params: {},
 			};
 			this.params = this.initParams;
-		} else if (global.hasReboot) return; // 定义过则跳过
+		} else if (hasRoot) return; // 定义过则跳过
 
 		// autoRun时自动加入Clocks大时钟，否则要手动加入
-		if (this.autoRun) global.Clocks.addClock(this);
+		if (this.autoRun) Clocks.addClock(this);
 		Log.info('Clock ' + this.name + 'has been initialized');
 	}
 
@@ -81,7 +81,7 @@ class Clock {
 
 	// 销毁时钟，从内存和运行环境中移除
 	destory() {
-		delete global.Clocks[this.name];
+		delete Clocks[this.name];
 		delete Memory.Clocks[this.name];
 	}
 

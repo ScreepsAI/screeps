@@ -20,7 +20,7 @@
  * 3.当前状态名
  * ---------------------------- 状态机 ------------------------------------------
  * 状态机是一个描述一个状态下的各种操作的对象，每种任务拥有各自不同的状态机，它包含以下内容:
- * 1.状态初始化方法: 如果没有在状态寄存器中找到有关的状态的话，就需要将初始化以便能够使用状态转换方法
+ * 1.状态初始化方法: 如果没有在状态寄存器中找到有关的状态的话，就需要将初始化以便能够使用状态转换函数
  * 2.状态机执行方法: 对当前状态进行处理，会依次处理当前状态的before，do和after方法(也可能跳过do和after)
  * 3.状态转换函数: 用于判断是否需要转换状态，转换后可以立即执行状态字典中的相关方法
  * 4.状态字典，它的结构如下:
@@ -61,20 +61,37 @@ import * as _ from 'lodash';
  * 所以在初始化的时候需要对参数做一遍校验处理，方便后续对合同的操作
  */
 export class Post {
+    /**
+     * 合同第一次实例化的事件，精确到毫秒
+     */
     id: number;
     postType: string;
     poster: string[] | Creep[];
     posterId: string[];
     target: string[] | any[];
     targetId: string[];
+    /**
+     * 签署这个合同至少需要什么“种类”的部件，注意是种类，不需要标注数量
+     */
     bodyNeed: BodyPartConstant | BodyPartConstant[];
+    /**
+     * 表示合同信息完成度
+     */
     status: string;
+    /**
+     * 额外的配置，仅限字面量或字面量属性值的对象
+     */
     options: object;
+    /**
+     * 该合同的实例内涉及到的对象或参数是否已经初始化完毕
+     * 如将id列表转化为实例列表
+     */
+    hasInit: boolean = false;
 	/**
 	 * @param {string} postType 合同类型，合同名称
 	 * @param {string[] | Creep[] | StructureTower[]} poster 合同执行者，可以是多个一起签署
 	 * @param {string[] | any[]} target 合同执行目标，可以有多个目标对象
-	 * @param {BodyPartConstant[]} bodyNeed 
+	 * @param {BodyPartConstant[]} bodyNeed 签署这个合同至少需要什么“种类”的部件，注意是种类，不需要标注数量
 	 * @param {object} options 额外的配置，仅限字面量或字面量属性值的对象
 	 */
     constructor(
@@ -82,8 +99,8 @@ export class Post {
         poster: string[] | Creep[],
         target: string[] | any[],
         bodyNeed: BodyPartConstant | BodyPartConstant[],
-        id?: number,
         options?: object,
+        id?: number,
     ) {
         this.id = id || new Date().getTime();
         this.postType = postType;
@@ -93,6 +110,10 @@ export class Post {
         this.options = options || {};
         this.checkParam(this.poster, 'poster');
         this.checkParam(this.target, 'target');
+    }
+
+    init() {
+        this.hasInit = true;
     }
 
     /**

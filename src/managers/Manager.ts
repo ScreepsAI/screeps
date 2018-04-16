@@ -130,6 +130,9 @@ export abstract class Manager {
 		return this.caches._hostile.data;
 	}
 
+	/**
+	 * TODOs 优化接口
+	 */
 	// 获取该管理器管理的对象
 	getEntry(id: string): IdObject | undefined {
 		return this.entries[id];
@@ -139,7 +142,10 @@ export abstract class Manager {
 		return this.memory.entries[id];
 	}
 
-	addEntry(obj: any): void {
+	/**
+	 * TODOs 优化接口
+	 */
+	addEntry(obj: any): any {
 		if (this.memory.entries[obj.id] === undefined) {
 			this.memory.entries[obj.id] = true;
 		}

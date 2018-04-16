@@ -14,12 +14,17 @@ interface Room {
 	my: boolean;
 	energy: number;
 	energyCapacity: number;
+	/**
+	 * 记录一个房间内的固定路径，如容器到资源点的最短路径
+	 */
+	paths: any[];
 
 	// constructionSite
 	constructionSites: ConstructionSite[];
 
 	// structures
 	mySpawn: StructureSpawn[];
+	myExtension: StructureExtension[];
 	// allStructures: Structure[];
 	// myStructures: Structure[];
 	// hostileStructures: Structure[];
@@ -46,7 +51,8 @@ interface Room {
 	hostileCreep: Creep[];
 
 	// Resources
-	source: Source[] | undefined;
+	source: Source[];
+	container: StructureContainer[];
 	// mineral: Mineral | undefined;
 
 	// Functions

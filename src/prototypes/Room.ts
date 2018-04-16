@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
 import { define } from '../utils/global';
-// import { RoleType } from '../enums/creep';
 
 Object.defineProperties(Room.prototype, {
 	// ////////////////////////////////
@@ -337,4 +336,10 @@ define(Room.prototype, {
 			},
 		},
 	},
+	container: {
+		kinds: [],
+		filter: function() {
+			return _.filter(ContainerManager.entries, roomFilter.bind(this));
+		},
+	}
 });

@@ -5,6 +5,4 @@ export class CreepManager extends Manager {
 	constructor() {
 		super('creep');
 	}
-
-	
 }

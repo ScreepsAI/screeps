@@ -13,59 +13,19 @@ Object.defineProperties(Creep.prototype, {
 	 */
 	posts: {
 		get() {
-			return this.memory.posts;
+			if (!this._posts)this._posts = {};
+			if (!this.memory.posts) this.memory.posts = {};
+			else {
+				_.forEach(this.memory.posts, (postdata, postId) => {
+					this._posts[postId] = postdata;
+				})
+			}
+			return this._posts;
+		},
+		set(v) {
+			this._posts = v;
 		},
 	},
-	// homeRoom: {
-	// 	get(): Room {
-	// 		return Game.rooms[this.memory.homeRoom];
-	// 	},
-	// },
-	// isInHomeRoom: {
-	// 	get(): boolean {
-	// 		return this.memory.homeRoom === this.room.name;
-	// 	},
-	// },
-	// action: {
-	// 	get(): string {
-	// 		return this.memory.action;
-	// 	},
-	// },
-	// target: {
-	// 	get(): Target | undefined {
-	// 		const target = this.memory.target;
-	// 		if (target === null) return undefined;
-	// 		switch (this.memory.targetType) {
-	// 			case TargetType.id:
-	// 				const obj = Game.getObjectById(target) as RoomObject;
-	// 				return _.isNull(obj) ? undefined : obj;
-	// 			case TargetType.flag:
-	// 				return Game.flags[target];
-	// 			case TargetType.room:
-	// 				return Game.rooms[target];
-	// 		}
-	// 	},
-	// },
-	// totalCarry: {
-	// 	get(): number {
-	// 		return _.sum(this.carry);
-	// 	},
-	// },
-	// isEmpty: {
-	// 	get(): boolean {
-	// 		return this.totalCarry === 0;
-	// 	},
-	// },
-	// isFull: {
-	// 	get(): boolean {
-	// 		return this.totalCarry === this.carryCapacity;
-	// 	},
-	// },
-	// missingHits: {
-	// 	get(): number {
-	// 		return this.hitsMax - this.hits;
-	// 	},
-	// },
 	isHurt: {
 		get(): boolean {
 			return this.hits < this.hitsMax;
@@ -73,24 +33,9 @@ Object.defineProperties(Creep.prototype, {
 	},
 });
 
-// Creep.prototype.setTarget = function(target: Target): void {
-// 	if (!_.isUndefined(_.get(target, 'id'))) {
-// 		this.memory.target = _.get(target, 'id');
-// 		this.memory.targetType = TargetType.id;
-// 	} else {
-// 		this.memory.target = _.get(target, 'name');
-// 		if (!_.isUndefined(_.get(target, 'color'))) {
-// 			this.memory.targetType = TargetType.flag;
-// 		} else {
-// 			this.memory.targetType = TargetType.room;
-// 		}
-// 	}
-// };
-
-// Creep.prototype.setAction = function(action: ActionType): void {
-// 	this.memory.action = action;
-// };
-
+/**
+ * 获取指定类型的部件数量
+ */
 Creep.prototype.getBodyparts = function(partTypes: BodyPartConstant): number {
 	return _(this.body)
 		.filter({ partTypes })

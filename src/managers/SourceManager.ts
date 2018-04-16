@@ -60,7 +60,7 @@ export class SourceManager extends Manager {
   createPost(poster: Creep[], target: Source[], adjacents: RoomPosition[]): void {
     _.forEach(adjacents, () => { // 暂时不记录固定工位
       const minerPost = new MinerPost(poster, target);
-      minerPost.options['status'] = 0;
+      minerPost.options['status'] = 0; // 0: 没有被处理的合同
       PostManager.addPost(minerPost);
     });
   }
