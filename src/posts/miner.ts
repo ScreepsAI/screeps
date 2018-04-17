@@ -65,7 +65,7 @@ export class MinerPost extends Post {
 	launch() {
 		const that = this;
 		_.map(this.poster as Creep[], (creep: Creep) => {
-			const postMemory = that.initStatus(creep);
+			const postMemory = creep.memory.posts[this.id];
 			const statusObject = that.dictionary[postMemory.status];
 			if (statusObject) {
 				if (statusObject.before instanceof Function) statusObject.before(creep);
@@ -82,24 +82,42 @@ export class MinerPost extends Post {
 		const that = this;
 		if (this.poster && this.poster.length > 0) {
 			_.map(this.poster as Creep[], (creep: Creep) => {
-				that.initStatus(creep);
-				that.initCreeps(creep);
+				let postMemory = creep.memory.posts[this.id];
+				let postData = creep.posts[this.id];
+				if (!postMemory) postMemory = creep.memory.posts[this.id] = {};
+				if (!postData) postData = creep.posts[this.id] = {};
+				// 设置status
+				postMemory.status = _.sum(creep.carry as any) > 0 ? 'moveToContainer' : 'moveToSource';
+				postData.status = postMemory.status;
+
+				/**
+				 * 每个creep的posts内对应该本合同的配置对象都存储了相关的id
+				 * 本函数将这些id实例化到运行时环境
+				 */
+				if (_.isString(postMemory.target) && !postData['target']) {
+					postData['target'] = Game.getObjectById(postMemory.target);
+				} else that.selectTarget(creep);
+				if (_.isString(postMemory.container) && !postData['container']) {
+					postData['container'] = Game.getObjectById(postMemory.container);
+				} else that.initContainer(creep);
+
 			});
 		}
 	}
 
 	/**
-	 * 每个creep的posts内对应该本合同的配置对象都存储了相关的id
-	 * 本函数将这些id实例化到运行时环境
+	 * 初始化目标对象
+	 * 可能存在多个目标，多选一
 	 */
-	initCreeps(creep: Creep) {
-		const memoryPost = creep.memory.posts[this.id];
-		if (!creep.posts[this.id]) creep.posts[this.id] = {};
-		if (_.isString(memoryPost.container)) {
-			creep.posts[this.id]['container'] = Game.getObjectById(memoryPost.container);
-		}
-		if (_.isString(memoryPost.target)) {
-			creep.posts[this.id]['target'] = Game.getObjectById(memoryPost.target);
+	selectTarget(creep: Creep) {
+		const postData = creep.posts[this.id];
+		if (!postData.target) {
+			_.forEach(this.target, (source: Source) => {
+				if (source.energy !== 0) {
+					postData.target = source;
+					return false;
+				}
+			});
 		}
 	}
 
@@ -109,34 +127,22 @@ export class MinerPost extends Post {
 	 * 初始化原则: 背包清空后再前往矿点
 	 * 同时需要初始化container对象，动态查找一个最近的进行绑定，满了之后再找另一个没满的
 	 */
-	initStatus(creep: Creep): any {
+	initContainer(creep: Creep) {
 		const postMemory = creep.memory.posts[this.id];
-		if (postMemory && !postMemory.status) { // creep拥有签署了该合同 且 没有初始化状态
-			// 设置status
-			postMemory.status = _.sum(creep.carry as any) > 0 ? 'moveToContainer' : 'moveToSource';
-			// 判断是否已经分配合适的container
-			if (postMemory.container) { // 已经分配有container
-				const container = Game.getObjectById(postMemory.container) as any;
-				if (container && (
-					(container.energy && container.energy < container.energyCapacity)) ||
-					(container.store && _.sum(container.store) < container.storeCapacity)) {
-					return;
-				}
+		const postData = creep.posts[this.id];
+		// 判断是否已经分配合适的container
+		if (postMemory.container) { // 已经分配有container
+			const container = Game.getObjectById(postMemory.container) as any;
+			if (container && (
+				(container.energy && container.energy < container.energyCapacity)) ||
+				(container.store && _.sum(container.store) < container.storeCapacity)) {
+				return;
 			}
-			// 分配可用的container
-			postMemory.container = this.initContainer(this.target[0] as Source);
 		}
-		return postMemory;
-	}
-
-	/**
-	 * 
-	 */
-	initContainer(source: Source) {
-		// const sourc
+		// 分配可用的container
 		let container;
 		// 找最近的房间，从资源点所在房间开始找起
-		let room = source.room;
+		let room = postData.target.room;
 		container = this.findContainerInRoom(room);
 
 		// 去附近的房间查找
@@ -147,8 +153,8 @@ export class MinerPost extends Post {
 			while (!container || roomList.length > 0) {
 				const roomName = roomList.shift() as string;
 				const tempRoom = Game.rooms[roomName];
-				if (tempRoom.name !== source.room.name) {
-					const lt = Game.map.getRoomLinearDistance(tempRoom.name, source.room.name);
+				if (tempRoom.name !== postData.target.room.name) {
+					const lt = Game.map.getRoomLinearDistance(tempRoom.name, postData.target.room.name);
 					if (!l || lt < l) {
 						l = lt;
 						room = tempRoom;
@@ -158,7 +164,10 @@ export class MinerPost extends Post {
 			}
 		}
 		if (!container) Log.error('我次奥为什么找不到可以用的容器啊！');
-		return container;
+		else {
+			postData.container = container;
+			postMemory.container = postData.container.id;
+		}
 	}
 
 	/**
@@ -205,6 +214,19 @@ export class MinerPost extends Post {
 		return container;
 	}
 
+	checkCarryEmpty(creep: Creep): boolean {
+		return _.sum(creep.carry as any) === 0;
+	}
+
+	checkCarryIsFull(creep: Creep): boolean {
+		return _.sum(creep.carry as any) === creep.carryCapacity;
+	}
+
+	checkContainerIsfull(container: any) {
+		return (container.energy && container.energy === container.energyCapacity) ||
+			(container.store && _.sum(container.store) === container.storeCapacity);
+	}
+
 	/**
 	 * 状态字典
 	 */
@@ -217,7 +239,7 @@ export class MinerPost extends Post {
 				 * 判断背包是否为空
 				 * 不为空则转换到moveToContainer状态
 				 */
-				if (_.sum(creep.carry as any) > 0) {
+				if (!this.checkCarryEmpty(creep)) {
 					postMemory.status = 'moveToContainer';
 					postData.status = 'moveToContainer';
 					this.dictionary[postData.status].before(creep);
@@ -226,10 +248,10 @@ export class MinerPost extends Post {
 				/**
 				 * 前往的矿点是否还有资源
 				 * 已枯竭则更换资源点
-				 * !暂时跳过该步骤，等在矿点旁边
 				 */
 				if (postData.target.energy === 0) {
-					Log.error('需要更换资源点');
+					// Log.error('需要更换资源点');
+					this.selectTarget(creep);
 				}
 
 				/**
@@ -237,8 +259,102 @@ export class MinerPost extends Post {
 				 * 到达则转换到hervest状态
 				 */
 				if (creep.pos.isNearTo(postData.target)) {
+					if (postMemory.tempPath || postData.tempPath) { // 到达矿点后删除临时路径（如果存在的话）
+						delete postMemory.tempPath;
+						delete postData.tempPath;
+					}
 					postMemory.status = 'hervest';
 					postData.status = 'hervest';
+					this.dictionary[postData.status].before(creep);
+					return;
+				}
+
+				this.dictionary[postData.status].do(creep);
+			},
+			do: (creep: Creep) => {
+				const postMemory = creep.memory.posts[this.id];
+				const postData = creep.posts[this.id];
+				/**
+				 * 前往矿点
+				 * 是否有可用的path
+				 * 优先判断是否有临时路径
+				 * 临时路径一般不是固定路径，临时构建的路径，
+				 */
+
+				let totalPath: any = postData.tempPath;
+				let index: number;
+				if (!totalPath) { // 不存在临时路径
+					if (postData.pathIndex) {
+						totalPath = PathManager.getByIndex(postData.pathIndex);
+					} else {
+						const searchPath = PathManager.find(postData.container.id, postData.target.id);
+						totalPath = searchPath.path;
+						index = searchPath.index;
+						if (!totalPath) { // 路径库中没有找到可用的路径，创建一条新的
+							totalPath = {
+								path: creep.room.findPath(postData.container.pos, postData.target.pos),
+							}
+							PathManager.add(postData.container.id, postData.target.id, totalPath.path);
+							index = PathManager.entries.length;
+						}
+						postMemory.pathIndex = index;
+						postData.pathIndex = index;
+					}
+				}
+
+				/**
+				 * 判断是否需要置换path方向
+				 */
+				if (totalPath.id2 && totalPath.id2 === postData.container.id) {
+					totalPath.path = _.reverse(totalPath.path);
+				}
+				// move
+				const moveRes = creep.moveByPath(totalPath.path);
+				/**
+				 * 不在固定路径上，创建临时路径
+				 */
+				if (moveRes === ERR_NOT_FOUND) {
+					totalPath = creep.room.findPath(creep.pos, postData.target.pos);
+					postMemory.tempPath = { path: totalPath };
+					postData.tempPath = { path: totalPath };
+					creep.moveByPath(totalPath); // 沿临时路径移动
+				}
+			},
+		},
+		moveToContainer: { // 移动至容器
+			before: (creep: Creep) => {
+				const postMemory = creep.memory.posts[this.id];
+				const postData = creep.posts[this.id];
+				/**
+				 * 判断背包是否已经清空
+				 * 空了则转换到moveToSource状态
+				 */
+				if (this.checkCarryEmpty(creep)) {
+					postMemory.status = 'moveToSource';
+					postData.status = 'moveToSource';
+					this.dictionary[postData.status].before(creep);
+					return;
+				}
+
+				/**
+				 * 前往的容器是否已满
+				 * 满了则更换容器
+				 */
+				if (this.checkContainerIsfull(postData.target)) {
+					this.initContainer(postData.target);
+				}
+
+				/**
+			   	 * 是否已经到达容器
+			     * 到达则转换到transfer状态
+			     */
+				if (creep.pos.isNearTo(postData.container)) {
+					if (postMemory.tempPath || postData.tempPath) {
+						delete postMemory.tempPath;
+						delete postData.tempPath;
+					}
+					postMemory.status = 'transfer';
+					postData.status = 'transfer';
 					this.dictionary[postData.status].before(creep);
 					return;
 				}
@@ -248,90 +364,122 @@ export class MinerPost extends Post {
 				const postMemory = creep.memory.posts[this.id];
 				const postData = creep.posts[this.id];
 				/**
-				 * 前往矿点
+				 * 前往容器
 				 * 是否有可用的path
-				 */
-				/**
 				 * 优先判断是否有临时路径
-				 * 临时路径一般为不是用固定路径时的临时构建的路径，
+				 * 临时路径一般不是固定路径，临时构建的路径，
 				 */
-				let totalPath: any = postMemory.tempPath;
+
+				let totalPath: any = postData.tempPath;
 				let index: number;
 				if (!totalPath) { // 不存在临时路径
-					const searchPath = PathManager.find(postData.container.id, postData.target.id);
-					totalPath = searchPath.path;
-					index = searchPath.index;
-					if (!totalPath) { // 路径库中没有找到可用的路径，创建一条新的
-						totalPath = creep.room.findPath(postData.container.pos, postData.target.pos);
-						PathManager.add(postData.container.id, postData.target.id, totalPath.path);
-						index = PathManager.entries.length;
+					if (postData.pathIndex) {
+						totalPath = PathManager.getByIndex(postData.pathIndex);
+					} else {
+						const searchPath = PathManager.find(postData.container.id, postData.target.id);
+						totalPath = searchPath.path;
+						index = searchPath.index;
+						if (!totalPath) { // 路径库中没有找到可用的路径，创建一条新的
+							totalPath = {
+								path: creep.room.findPath(postData.container.pos, postData.target.pos),
+							}
+							PathManager.add(postData.container.id, postData.target.id, totalPath.path);
+							index = PathManager.entries.length;
+						}
+						postMemory.pathIndex = index;
+						postData.pathIndex = index;
 					}
-					postMemory.pathIndex = index;
 				}
-				
-				const moveRes = creep.moveByPath(totalPath);
+
+				/**
+				 * 判断是否需要置换path方向
+				 */
+				if (totalPath.id2 && totalPath.id2 === postData.target.id) {
+					totalPath.path = _.reverse(totalPath.path);
+				}
+
+				const moveRes = creep.moveByPath(totalPath.path);
 				/**
 				 * 不在固定路径上，创建临时路径
 				 */
 				if (moveRes === ERR_NOT_FOUND) {
-					totalPath = creep.room.findPath(creep.pos, postData.target.pos);
-					postMemory.tempPath = totalPath;
+					totalPath = creep.room.findPath(creep.pos, postData.container.pos);
+					postMemory.tempPath = { path: totalPath };
+					postData.tempPath = { path: totalPath };
 					creep.moveByPath(totalPath); // 沿临时路径移动
 				}
 			},
 		},
-		moveToContainer: { // 移动至容器
-			before: () => {
+		transfer: { // 放置
+			before: (creep: Creep) => {
+				const postMemory = creep.memory.posts[this.id];
+				const postData = creep.posts[this.id];
 				/**
 				 * 判断背包是否已经清空
 				 * 空了则转换到moveToSource状态
 				 */
+				if (!this.checkCarryEmpty(creep)) {
+					postMemory.status = 'moveToSource';
+					postData.status = 'moveToSource';
+					this.dictionary[postData.status].before(creep);
+					return;
+				}
 
 				/**
 				 * 前往的容器是否已满
-				 * 满了则更换容器
-				 */
+				 * 满了则更换容器，转换状态为moveToContainer
+			     */
+				if (this.checkContainerIsfull(postData.target)) {
+					this.initContainer(postData.target);
+					postMemory.status = 'moveToContainer';
+					postData.status = 'moveToContainer';
+					this.dictionary[postData.status].before(creep);
+					return;
+				}
 
-				/**
-			   * 是否已经到达容器
-			   * 到达则转换到transfer状态
-			   */
+				this.dictionary[postData.status].do(creep);
 			},
-			do: () => {
-				// 前往容器
-			},
-		},
-		transfer: { // 放置
-			before: () => {
-				/**
-				 * 判断背包是否已经清空
-				 * 空了则转换到moveToSource状态
-				 */
-
-				/**
-				  * 前往的容器是否已满
-				  * 满了则更换容器
-				  */
-			},
-			do: () => {
+			do: (creep: Creep) => {
+				// const postMemory = creep.memory.posts[this.id];
+				const postData = creep.posts[this.id];
 				// 放置
+				creep.transfer(postData.container,RESOURCE_ENERGY);
 			},
 		},
 		hervest: { // 采集
-			before: () => {
-
+			before: (creep: Creep) => {
+				const postMemory = creep.memory.posts[this.id];
+				const postData = creep.posts[this.id];
 				/**
 				 * 判断背包是否已满
 				 * 满了则切换到moveToContainer状态
 				 */
+				if (this.checkCarryIsFull(creep)) {
+					postMemory.status = 'moveToContainer';
+					postData.status = 'moveToContainer';
+					this.dictionary[postData.status].before(creep);
+				}
 
 				/**
 				 * 前往的矿点是否还有资源
 				 * 已枯竭则更换资源点
+				 * 并转换状态为moveToSource
 				 */
+				if (postData.target.energy === 0) {
+					// Log.error('需要更换资源点');
+					this.selectTarget(creep);
+					postMemory.status = 'moveToSource';
+					postData.status = 'moveToSource';
+					this.dictionary[postData.status].before(creep);
+					return;
+				}
+
+				this.dictionary[postData.status].do(creep);
 			},
-			do: () => {
+			do: (creep: Creep) => {
+				const postData = creep.posts[this.id];
 				// 采集
+				creep.harvest(postData.target);
 			},
 		},
 	};
