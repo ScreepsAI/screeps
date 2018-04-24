@@ -20,8 +20,8 @@
 			"prettier --trailing-comma all --print-width 100 --single-quote --use-tabs --write",
 			"git add"
 		],
-		"config/**/*.ts": ["eslint --fix", "git add"],
-		"webpack.config.ts": ["eslint --fix", "git add"]
+		"config/**/*.js": ["eslint --fix", "git add"],
+		"webpack.config.js": ["eslint --fix", "git add"]
 	},
 	"dependencies": {
 		"@types/node": "^9.6.5",
