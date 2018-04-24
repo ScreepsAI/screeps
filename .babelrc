@@ -1,11 +1,13 @@
 {
-	"presets": [
-		"env",
-		"stage-0",
-		"screeps-regenerator-preset"
-	],
-	"plugins": [
-		"add-module-exports",
-		"dynamic-import-webpack"
-	]
+  "presets": [
+    "env",
+    "stage-0",
+    "es2017"
+  ],
+  "plugins": [
+    "add-module-exports",
+    "dynamic-import-webpack",
+    "transform-runtime",
+    "transform-decorators-legacy"
+  ]
 }

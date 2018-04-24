@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { Loop } from './loop';
 
 exports.loop = function() {

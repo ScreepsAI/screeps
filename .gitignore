@@ -14,6 +14,7 @@
 /typings
 
 # Screeps config file
+/config.json
 src/config.json
 config/config.json
 

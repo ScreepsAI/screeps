@@ -2,4 +2,4 @@
 // ======================================================
 
 // 清空所有内存
-_.forEach(Memory, (value, key) => delete Memory[key]);
+// _.forEach(Memory, (value, key) => delete Memory[key]);
