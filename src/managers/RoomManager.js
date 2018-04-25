@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import _ from 'lodash';
 // import { Manager } from './Manager';
 // import { RoomType } from '../enums/room';
 // import { isFriend } from '../utils';
@@ -18,7 +18,10 @@ import * as _ from 'lodash';
 export class RoomManager {
 	constructor() {
 		this.name = 'Room';
-		this.cacheName = 'RoomCaches';
+		this.cacheName = this.name + 'Caches';
+		/**
+		 * 用来管理room的字典
+		 */
 		this.entries = {};
 		if (!Memory.Managers) Memory.Managers = {};
 		if (!Memory.Managers.Room) {

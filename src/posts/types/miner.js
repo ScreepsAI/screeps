@@ -23,7 +23,7 @@
  * ============================================================================
  */
 import * as _ from 'lodash';
-import { Post } from './Post';
+import { Post } from '../Post';
 
 /**
  * 矿工合同

@@ -1,3 +1,5 @@
+import { Clock } from '../Clock';
+
 export class CounterClock extends Clock {
 	constructor({ name, active }) {
 		super({

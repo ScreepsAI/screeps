@@ -1,3 +1,4 @@
+import { Clock } from '../Clock';
 /**
  * creep出生用时钟，出生后会自动绑定到指定id的post中entry的kind name是creeps
  */

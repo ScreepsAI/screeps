@@ -11,6 +11,9 @@ export class ClockManager extends Manager {
 
 	constructor() {
 		super('clock');
+		this.entries = {};
+		this.activeList = {};
+		this.rebootFromMemory();
 	}
 
 	get list() {
@@ -58,8 +61,6 @@ export class ClockManager extends Manager {
 
 	rebootFromMemory() {
 		const that = this;
-		this.entries = {};
-		this.activeList = {};
 		_.forEach(this.memory.entries, (clockData, clockName) => {
 			const { type, params, tick, active } = clockData;
 			const clock = new global[type]({ name: clockName, initParams: params, tick, active });

@@ -1,3 +1,5 @@
+import _ from 'lodash';
+global['hasRoot'] = false;
 global['getObjByIds'] = idArray => {
 	const GameObjects = [];
 	_.forEach(idArray, id => GameObjects.push(Game.getObjectById(id)));

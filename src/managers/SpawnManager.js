@@ -19,6 +19,8 @@ export class SpawnManager extends Manager {
 	orders;
 	constructor() {
 		super('spawn');
+		this.clean();
+		this.rebootFromMemory();
 	}
 
 	/**

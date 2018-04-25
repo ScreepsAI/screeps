@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import _ from 'lodash';
 // import { define } from '../utils/global';
 // import { ControllerManager } from 'managers/ControllerManager';
 
@@ -40,40 +40,40 @@ class RoomExtend extends Room {
 		);
 	}
 	get source() {
-		return _.filter(SourceManager.entries, roomFilter);
+		return _.filter(SourceManager.entries, roomFilter.bind(this));
 	}
 	get container() {
-		return _.filter(ContainerManager.entries, roomFilter);
+		return _.filter(ContainerManager.entries, roomFilter.bind(this));
 	}
 	get myCreep() {
-		return _.filter(Game.creeps, myFilter);
+		return _.filter(Game.creeps, myFilter.bind(this));
 	}
 	get mySpawn() {
-		return _.filter(SpawnManager.entries, myFilter);
+		return _.filter(SpawnManager.entries, myFilter.bind(this));
 	}
 	get allySpawn() {
-		return _.filter(SpawnManager.entries, allyFilter);
+		return _.filter(SpawnManager.entries, allyFilter.bind(this));
 	}
 	get hostileSpawn() {
-		return _.filter(SpawnManager.entries, hostileFilter);
+		return _.filter(SpawnManager.entries, hostileFilter.bind(this));
 	}
 	get myExtension() {
-		return _.filter(ExtensionManager.entries, myFilter);
+		return _.filter(ExtensionManager.entries, myFilter.bind(this));
 	}
 	get allyExtension() {
-		return _.filter(ExtensionManager.entries, allyFilter);
+		return _.filter(ExtensionManager.entries, allyFilter.bind(this));
 	}
 	get hostileExtension() {
-		return _.filter(ExtensionManager.entries, hostileFilter);
+		return _.filter(ExtensionManager.entries, hostileFilter.bind(this));
 	}
 	get myConstructionSite() {
-		return _.filter(ConstructionSiteManager.entries, myFilter);
+		return _.filter(ConstructionSiteManager.entries, myFilter.bind(this));
 	}
 	get allyConstructionSite() {
-		return _.filter(ConstructionSiteManager.entries, allyFilter);
+		return _.filter(ConstructionSiteManager.entries, allyFilter.bind(this));
 	}
 	get hostileConstructionSite() {
-		return _.filter(ConstructionSiteManager.entries, hostileFilter);
+		return _.filter(ConstructionSiteManager.entries, hostileFilter.bind(this));
 	}
 }
 

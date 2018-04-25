@@ -7,56 +7,41 @@ const LogLevel = {
 	info: 4,
 	debug: 5,
 };
-export class Log {
-	LogLevel;
-	Emoji;
-
-	constructor() {
-		this.LogLevel = LogLevel[LOG_LEVEL];
-		this.Emoji = LOG_EMOJI;
-	}
-
+export const Log = {
 	success(...content) {
-		const title = this.Emoji ? Emoji.tick : '[SUCCESS]';
+		const title = LOG_EMOJI ? Emoji.tick : '[SUCCESS]';
 		console.log(Dye('success', title), Dye(COLOR_GREEN, ...content));
-	}
-
+	},
 	error(...content) {
-		if (this.LogLevel < 2) return;
-		const title = this.Emoji ? Emoji.cross : '[ERROR]';
+		if (LogLevel[LOG_LEVEL] < 2) return;
+		const title = LOG_EMOJI ? Emoji.cross : '[ERROR]';
 		console.log(Dye('error', title), Dye(COLOR_RED, ...content));
-	}
-
+	},
 	warn(...content) {
-		if (this.LogLevel < 3) return;
-		const title = this.Emoji ? Emoji.warn : '[WARN]';
+		if (LogLevel[LOG_LEVEL] < 3) return;
+		const title = LOG_EMOJI ? Emoji.warn : '[WARN]';
 		console.log(Dye('warn', title), Dye(COLOR_ORANGE, ...content));
-	}
-
+	},
 	info(...content) {
-		if (this.LogLevel < 4) return;
-		const title = this.Emoji ? Emoji.info : '[INFO]';
+		if (LogLevel[LOG_LEVEL] < 4) return;
+		const title = LOG_EMOJI ? Emoji.info : '[INFO]';
 		console.log(Dye('info', title), Dye(COLOR_BLUE, ...content));
-	}
-
+	},
 	debug(...content) {
-		if (this.LogLevel < 5) return;
-		const title = this.Emoji ? Emoji.debug : '[DEBUG]';
+		if (LogLevel[LOG_LEVEL] < 5) return;
+		const title = LOG_EMOJI ? Emoji.debug : '[DEBUG]';
 		console.log(Dye('debug', title), ...content);
-	}
-
+	},
 	module(title, ...content) {
 		console.log(Dye('system', `[${title}]`), ...content);
-	}
-
+	},
 	room(room, ...content) {
-		const title = this.Emoji ? `${Emoji.home} ${room.print}` : `[${room.print}]`;
+		const title = LOG_EMOJI ? `${Emoji.home} ${room.print}` : `[${room.print}]`;
 		console.log(Dye('room', title), ...content);
-	}
-
+	},
 	stringify(content) {
 		console.log('----------------------------------------------');
 		console.log(JSON.stringify(content, null, 2));
 		console.log('----------------------------------------------');
-	}
-}
+	},
+};

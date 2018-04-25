@@ -3,10 +3,9 @@
  * Create: 2018-04-11
  * Description:
  */
-import * as _ from 'lodash';
+import _ from 'lodash';
 import { Manager } from './Manager';
 import { Post } from '../posts/Post';
-import { MinerPost } from '../posts/miner';
 
 /**
  * 合同管理器
@@ -14,6 +13,8 @@ import { MinerPost } from '../posts/miner';
 export class PostManager extends Manager {
 	constructor() {
 		super('post');
+		this.clean();
+		this.rebootFromMemory();
 	}
 
 	get untreatedPosts() {
@@ -29,9 +30,9 @@ export class PostManager extends Manager {
 	}
 
 	clean() {
-		_.forEach(this.entries, (e, id) => {
-			if (!e.poster && !e.target) delete this.entries[id];
-		});
+		// _.forEach(this.entries, (e, id) => {
+		// 	if (!e.poster && !e.target) delete this.entries[id];
+		// });
 	}
 
 	/**

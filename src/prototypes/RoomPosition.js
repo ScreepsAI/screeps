@@ -1,6 +1,6 @@
 // import { getGame } from '../utils';
 
-class RoomPositionExtend {
+class RoomPositionExtend extends RoomPosition {
 	get raw() {
 		return {
 			x: this.x,
@@ -8,18 +8,11 @@ class RoomPositionExtend {
 			roomName: this.roomName,
 		};
 	}
+
 	get room() {
 		return Game.rooms[this.roomName];
 	}
-	get entries() {
-		return this.look();
-	}
-	get terrain() {
-		return this.lookFor(LOOK_TERRAIN);
-	}
-	get structures() {
-		return this.lookFor(LOOK_STRUCTURES);
-	}
+
 	/**
 	 * 获取坐标点为中心，range为半径的正方形范围内的有效坐标对象数组
 	 */
@@ -36,23 +29,49 @@ class RoomPositionExtend {
 		}
 		return adjacentPos;
 	}
+
 	/**
 	 * 获取坐标点为中心，range为半径的正方形范围内的有效坐标对象的字面量数组
 	 */
 	getRawAdjacent(range = 1) {
 		return _.map(this.getAdjacent(range), p => p.raw);
 	}
+
 	/**
 	 * 获取坐标点为中心，range为半径的正方形范围内不是墙体的坐标对象数据
 	 */
 	getAccessibleFields(range = 1) {
 		return _.filter(this.getAdjacent(range), pos => pos.terrain !== 'wall');
 	}
+
 	/**
 	 * 获取坐标点为中心，range为半径的正方形范围内不是墙体的坐标对象字面量数据
 	 */
 	getRawAccessibleFields(range = 1) {
 		return _.map(this.getAccessibleFields(range), p => p.raw);
+	}
+
+	getPositionByDirection(direction) {
+		switch (direction) {
+			case TOP:
+				return new RoomPosition(this.x, this.y - 1, this.roomName);
+			case TOP_RIGHT:
+				return new RoomPosition(this.x + 1, this.y - 1, this.roomName);
+			case RIGHT:
+				return new RoomPosition(this.x + 1, this.y, this.roomName);
+			case BOTTOM_RIGHT:
+				return new RoomPosition(this.x + 1, this.y + 1, this.roomName);
+			case BOTTOM:
+				return new RoomPosition(this.x, this.y + 1, this.roomName);
+			case BOTTOM_LEFT:
+				return new RoomPosition(this.x - 1, this.y + 1, this.roomName);
+			case LEFT:
+				return new RoomPosition(this.x - 1, this.y, this.roomName);
+			case TOP_LEFT:
+				return new RoomPosition(this.x - 1, this.y - 1, this.roomName);
+			default:
+				return new RoomPosition(this.x, this.y, this.roomName);
+		}
 	}
 }
 

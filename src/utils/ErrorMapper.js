@@ -15,6 +15,9 @@ export class ErrorMapper {
 
 		return this._consumer;
 	}
+	set consumer(value) {
+		this._consumer = value;
+	}
 
 	// Cache previously mapped traces to improve performance
 	static cache = {};
@@ -40,6 +43,7 @@ export class ErrorMapper {
 
 		while ((match = re.exec(stack))) {
 			if (match[2] === 'main') {
+				if (!this.consumer) this.consumer = new SourceMapConsumer(require('main.js.map'));
 				const pos = this.consumer.originalPositionFor({
 					column: parseInt(match[4], 10),
 					line: parseInt(match[3], 10),

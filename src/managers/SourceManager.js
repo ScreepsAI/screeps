@@ -5,11 +5,12 @@
  */
 import * as _ from 'lodash';
 import { Manager } from './Manager';
-import { MinerPost } from '../posts/miner';
 
 export class SourceManager extends Manager {
 	constructor() {
 		super('source');
+		this.clean();
+		this.rebootFromMemory();
 	}
 
 	/**

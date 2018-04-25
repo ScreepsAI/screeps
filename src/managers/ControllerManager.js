@@ -8,5 +8,7 @@ import { Manager } from './Manager';
 export class ControllerManager extends Manager {
 	constructor() {
 		super('controller');
+		this.clean();
+		this.rebootFromMemory();
 	}
 }

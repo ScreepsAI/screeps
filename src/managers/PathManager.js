@@ -9,6 +9,8 @@ export class PathManager extends Manager {
 		super('path');
 		if (!this.memory.entries) this.memory.entries = [];
 		this.entries = this.memory.entries;
+		this.clean();
+		this.rebootFromMemory();
 	}
 
 	/**

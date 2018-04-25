@@ -1,19 +1,8 @@
-import * as _ from 'lodash';
+import _ from 'lodash';
+import { TickCacheManager } from '../global/TickCacheManager';
 
 /**
- * manager 是一个对room内的一类对象进行管理的工具
- * 包括维护相关的memory和cache
- * Memory.Managers[Name] = {
- *    entries: {[id]: [entry data]},
- *    _my: [],
- *    _ally: [],
- *    _hostile: [],
- * };
- * global.caches[cacheName] = {
- *    _my: {time:, data,}
- *    _ally: {time:, data,}
- *    _hostile: {time:, data,}
- * };
+ * manager 是一个对一类对象进行管理的工具
  */
 export class Manager {
 	/**
@@ -22,52 +11,7 @@ export class Manager {
 	 */
 	constructor(name) {
 		this.name = _.upperFirst(name);
-		this.managerName = this.name + 'Manager';
-		this.cacheName = this.name + 'Caches';
-		this.entries = {};
-
-		// 初始化 memory 容器
-		if (_.isUndefined(Memory.Managers)) Memory.Managers = {};
-		if (_.isUndefined(this.memory)) {
-			this.caches = {};
-			this.memory = {};
-			this.memory.entries = {};
-		}
-		this.clean();
-		this.rebootFromMemory();
-	}
-
-	/**
-	 * 是指清理Manager的entries列表中存在但是游戏中不存在的对象
-	 */
-	clean() {
-		_.forEach(Object.keys(this.memory.entries), id => {
-			const e = Game.getObjectById(id);
-			if (!e) delete this.memory.entries[id];
-		});
-	}
-
-	/**
-	 * 是指从Memory恢复数据到global中
-	 */
-	rebootFromMemory() {
-		const that = this;
-		this.entries = {};
-		_.forEach(Object.keys(this.memory.entries), id => {
-			that.entries[id] = Game.getObjectById(id);
-		});
-		Log.success(
-			`Reboot ${_.padEnd(that.name, 20, ' ')} have ${Object.keys(that.entries).length} entries`,
-		);
-	}
-
-	// 运行时缓存
-	get caches() {
-		return caches[this.cacheName];
-	}
-
-	set caches(v) {
-		caches[this.cacheName] = v;
+		this.init();
 	}
 
 	get memory() {
@@ -78,71 +22,64 @@ export class Manager {
 		Memory.Managers[this.name] = value;
 	}
 
+	init() {
+		this.managerName = this.name + 'Manager';
+		this.cacheName = this.name + 'Caches';
+		this.entries = {};
+		/**
+		 * 单帧缓存字典
+		 */
+		this.tick = new TickCacheManager();
+
+		// 初始化 memory 容器
+		if (_.isUndefined(this.memory)) {
+			this.memory = {};
+			this.memory.entries = {};
+		}
+	}
+
 	/**
-	 * =================================================================
-	 * my, ally, hostile都是单帧缓存，即只在一个tick内有效的缓存
-	 * 且仅仅针对room内的对象设计，而room则独立于Manager之外
-	 * =================================================================
+	 * 是指清理Manager的entries列表中存在但是游戏中不存在的对象
 	 */
+	clean() {}
 
-	get my() {
-		if (!this.caches._my) this.caches._my = {};
-		if (!this.caches._my.data || this.caches._my.time < Game.time) {
-			this.caches._my.data = _.filter(this.entries, entry => {
-				if (entry instanceof Creep || entry instanceof OwnedStructure) return entry.my;
-				else return false;
-			});
-			this.caches._my.time = Game.time;
-		}
-		return this.caches._my.data;
-	}
-
-	get ally() {
-		if (!this.caches._ally) this.caches._ally = {};
-		if (!this.caches._ally.data || this.caches._ally.time < Game.time) {
-			this.caches._ally.data = _.filter(this.entries, entry => {
-				if (entry instanceof Creep || entry instanceof OwnedStructure) {
-					if (entry.owner) return WHITELIST.indexOf(entry.owner.username) >= 0;
-					else return false;
-				}
-				return false;
-			});
-			this.caches._ally.time = Game.time;
-		}
-		return this.caches._ally.data;
-	}
-
-	get hostile() {
-		if (!this.caches._hostile) this.caches._hostile = {};
-		if (!this.caches._hostile.data || this.caches._hostile.time < Game.time) {
-			this.caches._hostile.data = _.filter(this.entries, entry => {
-				if (entry instanceof Creep || entry instanceof OwnedStructure) {
-					if (entry.owner) return WHITELIST.indexOf(entry.owner.username) < 0;
-					else return false;
-				}
-				return false;
-			});
-			this.caches._hostile.time = Game.time;
-		}
-		return this.caches._hostile.data;
-	}
+	/**
+	 * 是指从Memory恢复数据到global中
+	 */
+	rebootFromMemory() {}
 
 	/**
 	 * TODOs 优化接口
 	 */
-	// 获取该管理器管理的对象
-	getEntry(id) {
-		return this.entries[id];
+	// 获取实例化对象
+	get(id) {
+		const tickEntry = this.tick.get(id);
+		if (tickEntry) return tickEntry;
+
+		const runtimeEntry = this.entries[id];
+		if (runtimeEntry) return this.tick.push(runtimeEntry);
+
+		let entry;
+		const memoryEntry = this.memory.entries[id];
+		if (memoryEntry) entry = this.instantiate(memoryEntry);
+		if (entry) {
+			this.entries[id] = entry;
+			return this.tick.push(entry);
+		}
+
+		return undefined;
 	}
 
-	getEntryFromMemory(id) {
-		return this.memory.entries[id];
-	}
+	/**
+	 * 使用Memory中查询到的data实例化对象
+	 * @param memoryData
+	 */
+	instantiate(memoryData) {}
 
 	/**
 	 * TODOs 优化接口
 	 */
-	addEntry(obj) {
+	add(obj) {
 		if (this.memory.entries[obj.id] === undefined) {
 			this.memory.entries[obj.id] = true;
 		}
@@ -151,7 +88,7 @@ export class Manager {
 
 	addEntries(objs) {
 		if (_.isArray(objs)) {
-			_.each(objs, obj => this.addEntry(obj));
+			_.each(objs, obj => this.add(obj));
 		}
 	}
 

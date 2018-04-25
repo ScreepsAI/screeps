@@ -4,7 +4,7 @@
 	"main": "dist/main.js",
 	"license": "MIT",
 	"scripts": {
-		"start": "webpack --colors --watch --env.ENV=local",
+		"start": "webpack --colors --watch",
 		"start:remote": "webpack --colors --watch --env.ENV=dev",
 		"doc": "typedoc --options ./typedoc.json && open ./doc/index.html",
 		"build": "webpack --colors --env.ENV=dev",

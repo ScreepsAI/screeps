@@ -1,14 +1,13 @@
 import { ErrorMapper } from './utils/ErrorMapper';
-import { Reboot } from './reboot';
+import { reboot } from './reboot';
 // import * as _ from 'lodash';
-// Main Loop
-// 解析 SourceMap , 统一错误处理
+
 export const Loop = ErrorMapper.wrapLoop(() => {
 	try {
 		/**
 		 * Reboot
 		 */
-		if (!global['hasRoot']) Reboot();
+		if (!global['hasRoot']) reboot();
 
 		/**
 		 * CreepManager
@@ -23,7 +22,7 @@ export const Loop = ErrorMapper.wrapLoop(() => {
 		// RoomManager.check();
 		// ClockManager.tick();
 	} catch (e) {
-		console.log(e.stack || e.message);
-		// global.hasRoot = false;
+		if (e instanceof Error) throw e;
+		else throw new Error(e);
 	}
 });

@@ -8,5 +8,7 @@ import { Manager } from './Manager';
 export class ExtensionManager extends Manager {
 	constructor() {
 		super('extension');
+		this.clean();
+		this.rebootFromMemory();
 	}
 }

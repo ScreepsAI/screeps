@@ -8,5 +8,7 @@ import { Manager } from './Manager';
 export class ConstructionSiteManager extends Manager {
 	constructor() {
 		super('constructionSite');
+		this.clean();
+		this.rebootFromMemory();
 	}
 }
