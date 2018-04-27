@@ -21,16 +21,10 @@
 ```flow
 s=>start: Start
 e=>end: Next Tick
-condHasRoot=>condition: hasRoot?
-condHasRooms=>condition: hasRooms?
-opReBoot=>subroutine: reboot operation
-opLoopCode=>subroutine: loop code
+Loop=>subroutine: Loop:>./Loop.md
 
-s->condHasRooms(yes)->condHasRoot
-condHasRooms(no)->e
-condHasRoot(yes,bottom)->opLoopCode->e
-condHasRoot(no)->opReBoot(bottom)->opLoopCode->e(left)
-e(left)->condHasRooms
+s(right)->Loop(right)->e
+e(right)->Loop
 ```
 
 
@@ -38,6 +32,28 @@ e(left)->condHasRooms
 ### Cache → [Link](./cache.md)
 
 ### Clock → [Link](./Clock.md)
+
+
+
+###扩展约定
+
+每个实例化对象都有`UUID`，`raw`属性。
+
+每个基类都用`existCheckKeyArray`属性。
+
+####UUID 
+
+UUID使用两个 0-9 a-Z的36进制字符串组成，前为随机变量，后为时间戳。所有实例化对象都有
+
+####raw
+
+字面量对象，即嵌套的属性中，最终都是字面量，不存在循环引用。用于存储在Memory中，也用来进行对象实例化。所有实例化对象都有。
+
+**仅输出用于实例化的属性，或者需要用于恢复实例化的属性**
+
+####existCheckKeyArray
+
+字符串数组，用于校验对象的在管理器字典中是否已经存在，字符串表示对象的属性名。所有实例化对象的基类都有。
 
 
 

@@ -1,6 +1,5 @@
 import _ from 'lodash';
-// import { define } from '../utils/global';
-// import { ControllerManager } from 'managers/ControllerManager';
+import { UUID } from '../utils/global';
 
 const roomFilter = function(o) {
 	return o && o.room.name === this.name;
@@ -17,7 +16,19 @@ const hostileFilter = function(o) {
 	);
 };
 
+Room.existCheckKeyArray = ['name'];
 class RoomExtend extends Room {
+	get UUID() {
+		if (this._UUID === undefined) this._UUID = UUID();
+		return this._UUID;
+	}
+	set UUID(v) {
+		this._UUID = v;
+	}
+	get raw() {
+		const { UUID, name } = this;
+		return { UUID, name };
+	}
 	get my() {
 		return this.controller.my;
 	}

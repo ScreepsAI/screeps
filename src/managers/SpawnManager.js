@@ -1,14 +1,5 @@
 import * as _ from 'lodash';
 import { Manager } from './Manager';
-import { Post } from '../posts/Post';
-
-// import { getRooms, getCost, makeBodyArray } from '../utils';
-// import { Setups } from '../creeps/setups';
-// import { RoomType } from '../enums/room';
-// import { ErrorType } from '../enums/error';
-// import { RolePriority } from '../enums/priority';
-// import { RoleType } from '../enums/creep';
-
 /**
  * Spawn管理器
  * 也负责管理creep生产线
@@ -16,11 +7,8 @@ import { Post } from '../posts/Post';
  * 生产完毕后会从Memory中删除
  */
 export class SpawnManager extends Manager {
-	orders;
 	constructor() {
-		super('spawn');
-		this.clean();
-		this.rebootFromMemory();
+		super('spawn', StructureSpawn);
 	}
 
 	/**
@@ -42,9 +30,7 @@ export class SpawnManager extends Manager {
 	 * }
 	 */
 
-	/**
-	 * 处理Creep生产队列
-	 */
+	// 处理Creep生产队列
 	dealwithCreateOrder() {
 		const that = this;
 		const orders = _.filter(this.orders, o => o.status === 0);
@@ -161,43 +147,5 @@ export class SpawnManager extends Manager {
 			spawn = tempRoom.mySpawn[0];
 		}
 		return spawn;
-	}
-
-	// public clean() { }
-
-	/**
-	 * 是指从Memory恢复数据到global中
-	 */
-	rebootFromMemory() {
-		// spawn
-		const that = this;
-		super.rebootFromMemory();
-		// order
-		this.orders = {};
-		_.forEach(this.memory.orders, order => {
-			const { id, spawnName, name, options, status, body, postId } = order;
-			that.orders[id] = {
-				spawn: Game.spawns[spawnName],
-				postId,
-				name,
-				options,
-				status,
-				body,
-				id,
-			};
-		});
-		Log.success(
-			`Reboot ${_.padEnd(that.name + ' ' + 'Order', 20, ' ')} have ${
-				Object.keys(that.orders).length
-			} orders`,
-		);
-	}
-
-	setEmpty() {
-		this.memory.entries = {};
-		this.entries = {};
-		this.memory.orders = {};
-		this.orders = {};
-		this.rebootFromMemory();
 	}
 }

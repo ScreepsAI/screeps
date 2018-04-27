@@ -3,7 +3,12 @@ import * as _ from 'lodash';
  * Creep
  */
 
+Creep.existCheckKeyArray = ['id'];
 class CreepExtend extends Creep {
+	get raw() {
+		const { UUID, id } = this;
+		return { UUID, id };
+	}
 	get isHurt() {
 		return this.hits < this.hitsMax;
 	}

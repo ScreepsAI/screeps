@@ -80,6 +80,7 @@ export class Post {
 	 * 如将id列表转化为实例列表
 	 */
 	hasInit = false;
+
 	/**
 	 * @param {string} postType 合同类型，合同名称
 	 * @param {any|undefined} entries
@@ -89,12 +90,12 @@ export class Post {
 	 * @param {object} options 额外的配置，仅限字面量或字面量属性值的对象
 	 */
 	constructor({ postType, entries, entriesId, entriesName, bodyNeed, options, id, status }) {
-		this.id = id || new Date().getTime();
+		this.id = id || `post-${new Date().getTime()}`;
 		this.postType = postType;
 		this.entries = entries || {};
 		this.entriesId = entriesId || {};
 		this.entriesName = entriesName || {};
-		this.bodyNeed = bodyNeed;
+		this.bodyNeed = bodyNeed || [];
 		this.options = options || {};
 		this.status = status || 0;
 		/**

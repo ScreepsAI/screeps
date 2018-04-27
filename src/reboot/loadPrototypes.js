@@ -5,5 +5,6 @@
  */
 import 'Prototypes/Room';
 import 'Prototypes/RoomPosition';
+import 'Prototypes/RoomObject';
 import 'Prototypes/Creep';
 import 'Prototypes/Source';

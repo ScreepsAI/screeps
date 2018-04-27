@@ -5,22 +5,37 @@
  */
 
 export class TickCacheManager {
-	constructor() {
-		this.list = {};
+	constructor(runtimeCacheManager) {
+		this.runtimeCacheManager = runtimeCacheManager;
+		this.setEmpty();
 	}
-	push(entry) {
-		this.list[entry.id] = {
+
+	get(UUID) {
+		const entry = this.list[UUID];
+		if (entry && entry.time === Game.time) return entry;
+		else {
+			delete this.list[UUID];
+			return this.runtimeCacheManager.get(UUID);
+		}
+	}
+
+	getEntries() {
+		return this.list;
+	}
+
+	add(entry) {
+		this.list[entry.UUID] = {
 			entry,
 			time: Game.time,
 		};
 		return entry;
 	}
-	get(id) {
-		const e = this.list[id];
-		if (e && e.time === Game.time) return e;
-		else {
-			delete this.list[id];
-			return undefined;
-		}
+
+	delete(UUID) {
+		delete this.list[UUID];
+	}
+
+	setEmpty() {
+		this.list = {};
 	}
 }

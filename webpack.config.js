@@ -52,7 +52,7 @@ module.exports = {
   },
   plugins: [
     new CleanWebpackPlugin([`dist/${ENV}/*`], {root: ROOT}),
-    new CopyWebpackPlugin([{from: path.join(ROOT, 'src/config.js')}, {from: path.join(ROOT, 'src/commands.js')}]),
+    new CopyWebpackPlugin([{from: path.join(ROOT, 'src/config.js')}]),
     new ScreepsSourceMapToJson()
   ],
   watchOptions: {

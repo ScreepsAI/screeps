@@ -1,4 +1,7 @@
 import _ from 'lodash';
+import { instantiate, UUID } from '../utils/global';
+import { MemoryCacheManager } from '../global/MemoryCacheManager';
+import { RuntimeCacheManager } from '../global/RuntimeCacheManager';
 import { TickCacheManager } from '../global/TickCacheManager';
 
 /**
@@ -9,81 +12,51 @@ export class Manager {
 	 * entries为运行时环境缓存
 	 * 一旦重新提交代码或者过了24点，将会被清空
 	 */
-	constructor(name) {
-		this.name = _.upperFirst(name);
-		this.init();
+	constructor(entryName, entryClass) {
+		this.entryName = entryName;
+		this.entryClass = entryClass;
+		this.initCacheManagerByName(entryName);
 	}
 
-	get memory() {
-		return Memory.Managers[this.name];
+	initCacheManagerByName(entryName) {
+		if (_.isString(entryName)) {
+			this.memoryCaches = new MemoryCacheManager(entryName, this.entryClass.existCheckKeyArray);
+			this.runtimeCaches = new RuntimeCacheManager(this.memoryCaches, this.entryClass);
+			this.tickCaches = new TickCacheManager(this.memoryCaches);
+		} else throw new Error('entry name is not a string');
 	}
 
-	set memory(value) {
-		Memory.Managers[this.name] = value;
-	}
-
-	init() {
-		this.managerName = this.name + 'Manager';
-		this.cacheName = this.name + 'Caches';
-		this.entries = {};
-		/**
-		 * 单帧缓存字典
-		 */
-		this.tick = new TickCacheManager();
-
-		// 初始化 memory 容器
-		if (_.isUndefined(this.memory)) {
-			this.memory = {};
-			this.memory.entries = {};
-		}
-	}
-
-	/**
-	 * 是指清理Manager的entries列表中存在但是游戏中不存在的对象
-	 */
-	clean() {}
-
-	/**
-	 * 是指从Memory恢复数据到global中
-	 */
-	rebootFromMemory() {}
-
-	/**
-	 * TODOs 优化接口
-	 */
 	// 获取实例化对象
-	get(id) {
-		const tickEntry = this.tick.get(id);
+	get(UUID) {
+		// 优先获取单帧缓存
+		const tickEntry = this.tickCaches.get(UUID);
 		if (tickEntry) return tickEntry;
 
-		const runtimeEntry = this.entries[id];
-		if (runtimeEntry) return this.tick.push(runtimeEntry);
+		// 再考虑运行时缓存
+		const runtimeEntry = this.runtimeCaches.get(UUID);
+		if (runtimeEntry) return this.tickCaches.push(runtimeEntry); //找到后进行单帧缓存
 
+		// 基本不会去找持久化缓存
 		let entry;
-		const memoryEntry = this.memory.entries[id];
-		if (memoryEntry) entry = this.instantiate(memoryEntry);
+		const memoryEntry = this.memoryCaches.get(UUID);
+		if (memoryEntry) entry = instantiate(memoryEntry, this.entryClass);
 		if (entry) {
-			this.entries[id] = entry;
-			return this.tick.push(entry);
+			this.runtimeCaches.push(entry);
+			return this.tickCaches.push(entry);
 		}
-
 		return undefined;
 	}
 
-	/**
-	 * 使用Memory中查询到的data实例化对象
-	 * @param memoryData
-	 */
-	instantiate(memoryData) {}
+	getEntries() {
+		return this.runtimeCaches.getEntries();
+	}
 
-	/**
-	 * TODOs 优化接口
-	 */
-	add(obj) {
-		if (this.memory.entries[obj.id] === undefined) {
-			this.memory.entries[obj.id] = true;
-		}
-		this.entries[obj.id] = obj;
+	add(entry) {
+		if (this.checkExist(entry)) {
+			entry.UUID = UUID();
+			this.memoryCaches.push(entry);
+			this.runtimeCaches.push(entry);
+		} else Log.error(`exist entry: ${this.entryName}`);
 	}
 
 	addEntries(objs) {
@@ -91,25 +64,19 @@ export class Manager {
 			_.each(objs, obj => this.add(obj));
 		}
 	}
-
-	// protected set memory(value: any) {
-	// 	Memory.manager[this.name] = value;
-	// }
-
-	// protected getValue(manager: string, path: string) {
-	// 	return _.get(Memory.manager, [manager, path]);
-	// }
-
-	// protected setValue(manager: string, path: string, value: any): void {
-	// 	_.set(Memory.manager, [manager, path], value);
-	// }
-
-	/**
-	 * 将存储对象全部置空
-	 */
-	setEmpty() {
-		this.memory.entries = {};
-		this.entries = {};
-		this.rebootFromMemory();
+	checkExist(entry) {
+		if (entry === undefined) throw new Error('entry is undefined');
+		if (entry.UUID) return true;
+		else return this.memoryCaches.checkExist(entry);
 	}
+
+	// 清空缓存管理器 - 谨慎调用
+	setEmpty() {
+		this.memoryCaches.setEmpty();
+		this.runtimeCaches.setEmpty();
+		this.tickCaches.setEmpty();
+	}
+
+	// 是指清理Manager的entries列表中存在但是游戏中不存在的对象
+	clean() {}
 }

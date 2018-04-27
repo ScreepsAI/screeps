@@ -29,13 +29,15 @@ Manager作为一个管理器，他的功能为如下几个方面：
 
 ## 对象 - entry
 
-Manager需要指定`entry name`，该name会用来很多场合
+Manager需要指定`entryName`，该name会用来很多场合
 
-如：`post`的Manager名称就会为`PostManger`
+如：`post`的Manager名称就会为`PostManger`，并绑定MemoryCacheManager中指定`post`类别的对象。
 
 >### 约定 - 对象id
 >
->`id`		一般为当前毫秒数+2位随机数
+>`UUID`		在add时创建UUID
+
+Manager对entry的结构应该是明确的，并拥有该类型对象的三种缓存管理器。
 
 ### 清理 - clean
 

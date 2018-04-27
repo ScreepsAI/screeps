@@ -1,7 +1,5 @@
 import _ from 'lodash';
-// import { Manager } from './Manager';
-// import { RoomType } from '../enums/room';
-// import { isFriend } from '../utils';
+import { Manager } from './Manager';
 
 /**
  * RoomManager作为房间管理器
@@ -15,97 +13,9 @@ import _ from 'lodash';
  *    statisticTime:,
  * }
  */
-export class RoomManager {
+export class RoomManager extends Manager {
 	constructor() {
-		this.name = 'Room';
-		this.cacheName = this.name + 'Caches';
-		/**
-		 * 用来管理room的字典
-		 */
-		this.entries = {};
-		if (!Memory.Managers) Memory.Managers = {};
-		if (!Memory.Managers.Room) {
-			this.caches = {};
-			this.memory = {
-				entries: {},
-				statisticTime: undefined,
-			};
-		}
-		this.rebootFromMemory();
-	}
-
-	get caches() {
-		return caches[this.cacheName];
-	}
-
-	set caches(v) {
-		caches[this.cacheName] = v;
-	}
-
-	get memory() {
-		return Memory.Managers[this.name];
-	}
-
-	set memory(value) {
-		Memory.Managers[this.name] = value;
-	}
-
-	/**
-	 * =================================================================
-	 * my, ally, hostile都是单帧缓存，即只在一个tick内有效的缓存
-	 * =================================================================
-	 */
-
-	get my() {
-		if (!this.caches._my) this.caches._my = {};
-		if (!this.caches._my.data || this.caches._my.time < Game.time) {
-			this.caches._my.data = _.filter(this.entries, entry => entry.controller.my === true);
-			this.caches._my.time = Game.time;
-		}
-		return this.caches._my.data;
-	}
-
-	get ally() {
-		if (!this.caches._ally) this.caches._ally = {};
-		if (!this.caches._ally.data || this.caches._ally.time < Game.time) {
-			this.caches._ally.data = _.filter(
-				this.entries,
-				entry => WHITELIST.indexOf(entry.controller.onwer.username) >= 0,
-			);
-			this.caches._ally.time = Game.time;
-		}
-		return this.memory._ally.data;
-	}
-
-	get hostile() {
-		if (!this.caches._hostile) this.caches._hostile = {};
-		if (!this.caches._hostile.data || this.caches._hostile.time < Game.time) {
-			this.caches._hostile.data = _.filter(
-				this.entries,
-				entry => WHITELIST.indexOf(entry.controller.onwer.username) < 0,
-			);
-			this.caches._hostile.time = Game.time;
-		}
-		return this.caches._hostile.data;
-	}
-
-	// 获取该管理器管理的对象
-	getEntry(roomName) {
-		return this.entries[roomName];
-	}
-
-	addEntry(room) {
-		this.memory.entries[room.name] = {
-			my: room.my,
-		};
-		this.entries[room.name] = room;
-	}
-
-	addEntries(rooms) {
-		if (_.isArray(rooms)) {
-			const that = this;
-			_.map(rooms, room => that.addEntry(room));
-		}
+		super('room', Room);
 	}
 
 	/**
@@ -136,7 +46,7 @@ export class RoomManager {
 					console.log(adjacents.length, source.posts.length);
 					if (adjacents.length - source.posts.length > 0) {
 						// 判断是否需要配置新的岗位
-						SourceManager.createPost(undefined, [source], adjacents);
+						// SourceManager.createPost(undefined, [source], adjacents);
 					}
 				});
 
@@ -164,18 +74,18 @@ export class RoomManager {
 		 * 有的话，创造Creep来填补空缺岗位
 		 */
 		// PostManager.normalPosts;
-		PostManager.dealwithUntreatedPosts();
+		// PostManager.dealwithUntreatedPosts();
 
 		/**
 		 * 各个拥有order的manager检查并处理order列表
 		 * SpawnManager
 		 */
-		SpawnManager.dealwithCreateOrder();
+		// SpawnManager.dealwithCreateOrder();
 
 		/**
 		 * 遍历所有Posts并处理之
 		 */
-		PostManager.check();
+		// PostManager.check();
 	}
 
 	/**
@@ -209,20 +119,5 @@ export class RoomManager {
 				}
 			});
 		});
-	}
-
-	/**
-	 * 是指从Memory恢复数据到global中
-	 */
-	rebootFromMemory() {
-		const that = this;
-		// this.entries = {};
-		_.forEach(this.memory.entries, (roomData, roomName) => {
-			if (roomName in Game.rooms) that.entries[roomName] = roomData;
-			else this.memory.entries[roomName]['my'] = false;
-		});
-		Log.success(
-			`Reboot ${_.padEnd(that.name, 20, ' ')} have ${Object.keys(that.entries).length} entries`,
-		);
 	}
 }
