@@ -7,8 +7,6 @@ import { Manager } from './Manager';
 
 export class ContainerManager extends Manager {
 	constructor() {
-		super('container');
-		this.clean();
-		this.rebootFromMemory();
+		super('container', StructureContainer);
 	}
 }

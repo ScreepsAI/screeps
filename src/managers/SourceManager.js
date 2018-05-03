@@ -8,9 +8,7 @@ import { Manager } from './Manager';
 
 export class SourceManager extends Manager {
 	constructor() {
-		super('source');
-		this.clean();
-		this.rebootFromMemory();
+		super('source', Source);
 	}
 	/**
 	 * 清理出没有工人的合同

@@ -41,6 +41,8 @@ export class MemoryCacheManager {
 		else return (Memory[`${this.entryName}s`][entry.UUID] = entry.raw);
 	}
 
+	modify() {}
+
 	delete(UUID) {
 		if (UUID === undefined) throw new Error('UUID is undefined');
 		delete Memory[`${this.entryName}s`][UUID];

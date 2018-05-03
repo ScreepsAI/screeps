@@ -50,7 +50,7 @@ export class PathManager extends Manager {
 	 * @param path
 	 */
 	add(id1, id2, path) {
-		if (this.checkExist({ id1, id2 })) super.add({ id1, id2, path, f: 0 });
+		if (this.checkExist({ id1, id2 })) super.add(new Path({ id1, id2, path, f: 0 }));
 	}
 
 	/**

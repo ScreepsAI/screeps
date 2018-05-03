@@ -5,15 +5,14 @@
  */
 import * as _ from 'lodash';
 import { Manager } from './Manager';
+import { Clock } from '../clocks/Clock';
 
 export class ClockManager extends Manager {
 	activeList;
 
 	constructor() {
-		super('clock');
-		this.entries = {};
+		super('clock', Clock);
 		this.activeList = {};
-		this.rebootFromMemory();
 	}
 
 	get list() {
@@ -24,6 +23,10 @@ export class ClockManager extends Manager {
 		return this.entries[name] || this.memory.entries[name];
 	}
 
+	add(clock) {
+		super.add(clock);
+		if (clock.active) this.setAvtive(clock.name);
+	}
 	addClock(clock) {
 		if (!this.memory.entries[clock.name]) {
 			// 定义过则不重复定义

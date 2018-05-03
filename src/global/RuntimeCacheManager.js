@@ -44,6 +44,8 @@ export class RuntimeCacheManager {
 		return (global[`${this.entryName}s`][entry.UUID] = entry);
 	}
 
+	modify() {}
+
 	delete(UUID) {
 		if (UUID === undefined) throw new Error('UUID is undefined');
 		delete global[`${this.entryName}s`][UUID];

@@ -10,18 +10,29 @@ screeps中一个tick会执行一次所有代码
 s=>start: Start
 e=>end: Next Tick
 condHasRoot=>condition: hasRoot?
-condHasRooms=>condition: hasRooms?
 opReBoot=>subroutine: reboot operation
 opMain=>subroutine: main code
 
-s->condHasRooms
-condHasRooms(yes)->condHasRoot
-condHasRooms(no)->e
+s->condHasRoot
 condHasRoot(yes)->opMain
 condHasRoot(no)->opReBoot
 opReBoot->opMain->e
 e(left)->condHasRooms
 ```
+
+## newRooms？
+
+很有可能，你会被打的一个占领的房间都不剩，然后你respawn了，那么你就需要重新分析房间内的情况，并加以缓存。待编辑。
+
+## hasRoot？
+
+
+
+## Reboot
+
+
+
+## Main code
 
 
 

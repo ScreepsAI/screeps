@@ -3,9 +3,7 @@ import { Manager } from './Manager';
 
 export class CreepManager extends Manager {
 	constructor() {
-		super('creep');
-		this.clean();
-		this.rebootFromMemory();
+		super('creep', Creep);
 	}
 
 	clean() {
