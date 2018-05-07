@@ -23,11 +23,8 @@
     "suppressImplicitAnyIndexErrors": true
   },
   "include": [
-    "webpack.config.ts",
-    "config/*.ts",
-    "config/*.d.ts",
     "src/**/*.ts",
-    "src/**/*.d.ts"
+    "docs/**/*.d.ts"
   ],
   "exclude": [
     "example",

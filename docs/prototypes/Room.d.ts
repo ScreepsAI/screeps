@@ -1,0 +1,3 @@
+interface Room {
+	print: string;
+}

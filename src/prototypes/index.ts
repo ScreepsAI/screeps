@@ -1,6 +1,4 @@
-import './Room';
-import './RoomPosition';
-import './RoomObject';
-import './Creep';
-import './Source';
-import './Mineral';
+export const InstallProtoype = () => {
+	require('./Flag').install();
+	require('./Room').install();
+};
