@@ -31,20 +31,26 @@ export class RuntimeCacheManager {
 
 	getEntries() {
 		const entries = global[`${this.entryName}s`];
-		if (!entries) throw new Error(`unable to find this kind of Entry: ${this.entryName} in Global`);
+		if (!entries || entries.length === 0)
+			throw new Error(`unable to find this kind of Entry: ${this.entryName} in Global`);
 		return entries;
 	}
 
-	add(entry) {
+	add(entry, ignoreExist) {
 		if (entry === undefined) throw new Error('entry is undefined');
 		if (!(entry instanceof this.entryClass))
 			throw new Error(`entry is instanceof ${this.entryClass.name}`);
 		if (entry.UUID === undefined) throw new Error('entry has not a UUID');
-		this.memoryCacheManager.add(entry);
 		return (global[`${this.entryName}s`][entry.UUID] = entry);
 	}
 
-	modify() {}
+	modify(entry, modifyOptions) {
+		if (entry === undefined) throw new Error('entry is undefined');
+		if (entry.UUID === undefined) throw new Error('entry has not a UUID');
+		if (this.memoryCacheManager.modify(entry, modifyOptions)) {
+			return (global[`${this.entryName}s`][entry.UUID] = Object.assign(entry, modifyOptions));
+		}
+	}
 
 	delete(UUID) {
 		if (UUID === undefined) throw new Error('UUID is undefined');

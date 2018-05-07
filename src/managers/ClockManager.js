@@ -73,6 +73,4 @@ export class ClockManager extends Manager {
 			`Reboot ${_.padEnd(this.name, 20, ' ')} have ${Object.keys(this.entries).length} Clocks`,
 		);
 	}
-
-	clean() {}
 }

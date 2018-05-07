@@ -11,8 +11,8 @@ export class TickCacheManager {
 	}
 
 	get(UUID) {
-		const entry = this.list[UUID];
-		if (entry && entry.time === Game.time) return entry;
+		const tickEntry = this.list[UUID];
+		if (tickEntry && tickEntry.time === Game.time) return tickEntry.entry;
 		else {
 			delete this.list[UUID];
 			return this.runtimeCacheManager.get(UUID);
@@ -20,7 +20,10 @@ export class TickCacheManager {
 	}
 
 	getEntries() {
-		return this.list;
+		return _.filter(this.list, tickEntry => {
+			if (tickEntry && tickEntry.time === Game.time) return true;
+			else return false;
+		});
 	}
 
 	add(entry) {

@@ -3,11 +3,17 @@
  * Create: 2018-04-27
  * Description:
  */
-Flag.existCheckKeyArray = ['name'];
+import _ from 'lodash';
 class FlagExtend extends Flag {
 	get raw() {
-		const { UUID, name } = this;
-		return { UUID, name };
+		return _.pick(this, this.paramsList);
+	}
+	get existCheckKeyArray() {
+		return ['name'];
+	}
+
+	get paramsList() {
+		return ['UUID', 'name'];
 	}
 }
 

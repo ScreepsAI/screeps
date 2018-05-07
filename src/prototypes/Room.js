@@ -16,74 +16,103 @@ const hostileFilter = function(o) {
 	);
 };
 
-Room.existCheckKeyArray = ['name'];
 class RoomExtend extends Room {
 	get UUID() {
 		if (this._UUID === undefined) this._UUID = UUID();
 		return this._UUID;
 	}
+
 	set UUID(v) {
 		this._UUID = v;
 	}
+
 	get raw() {
-		const { UUID, name } = this;
-		return { UUID, name };
+		return _.pick(this, this.paramsList);
 	}
+
+	get existCheckKeyArray() {
+		return ['name'];
+	}
+
+	get paramsList() {
+		return ['UUID', 'name'];
+	}
+
 	get my() {
 		return this.controller.my;
 	}
+
 	get rcl() {
 		return this.controller.level;
 	}
+
 	get owner() {
 		return this.controller.owner;
 	}
+
 	get energy() {
 		return (
 			_.sumBy(this.mySpawn, spawn => spawn.energy) +
 			_.sumBy(this.myExtension, extension => extension.energy)
 		);
 	}
+
 	get energyCapacity() {
 		return (
 			_.sumBy(this.mySpawn, spawn => spawn.energyCapacity) +
 			_.sumBy(this.myExtension, extension => extension.energyCapacity)
 		);
 	}
-	get source() {
+
+	get sources() {
 		return _.filter(SourceManager.entries, roomFilter.bind(this));
 	}
+
 	get container() {
 		return _.filter(ContainerManager.entries, roomFilter.bind(this));
 	}
-	get myCreep() {
-		return _.filter(Game.creeps, myFilter.bind(this));
+
+	get myCreeps() {
+		return _.filter(CreepManager.entries, myFilter.bind(this));
 	}
-	get mySpawn() {
+
+	get hostileCreeps() {
+		return _.filter(CreepManager.entries, hostileFilter.bind(this));
+	}
+
+	get mySpawns() {
 		return _.filter(SpawnManager.entries, myFilter.bind(this));
 	}
-	get allySpawn() {
+
+	get allySpawns() {
 		return _.filter(SpawnManager.entries, allyFilter.bind(this));
 	}
-	get hostileSpawn() {
+
+	get hostileSpawns() {
 		return _.filter(SpawnManager.entries, hostileFilter.bind(this));
 	}
-	get myExtension() {
+
+	get myExtensions() {
 		return _.filter(ExtensionManager.entries, myFilter.bind(this));
 	}
-	get allyExtension() {
+
+	get allyExtensions() {
 		return _.filter(ExtensionManager.entries, allyFilter.bind(this));
 	}
-	get hostileExtension() {
+
+	get hostileExtensions() {
 		return _.filter(ExtensionManager.entries, hostileFilter.bind(this));
 	}
-	get myConstructionSite() {
+
+	get myConstructionSites() {
 		return _.filter(ConstructionSiteManager.entries, myFilter.bind(this));
 	}
-	get allyConstructionSite() {
+
+	get allyConstructionSites() {
 		return _.filter(ConstructionSiteManager.entries, allyFilter.bind(this));
 	}
-	get hostileConstructionSite() {
+
+	get hostileConstructionSites() {
 		return _.filter(ConstructionSiteManager.entries, hostileFilter.bind(this));
 	}
 }

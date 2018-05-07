@@ -1,8 +1,14 @@
-Source.existCheckKeyArray = ['id'];
+import _ from 'lodash';
 class SourceExtend extends Source {
 	get raw() {
-		const { UUID, id } = this;
-		return { UUID, id };
+		return _.pick(this, this.paramsList);
+	}
+	get existCheckKeyArray() {
+		return ['id'];
+	}
+
+	get paramsList() {
+		return ['UUID', 'id'];
 	}
 	// 返回资源是否已空的状态
 	get isEmpty() {

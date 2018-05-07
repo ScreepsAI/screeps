@@ -3,11 +3,18 @@
  * Create: 2018-04-27
  * Description:
  */
-
+import _ from 'lodash';
 class ContainerExtend extends StructureContainer {
 	get raw() {
-		const { UUID, id } = this;
-		return { UUID, id };
+		return _.pick(this, this.paramsList);
+	}
+
+	get existCheckKeyArray() {
+		return ['id'];
+	}
+
+	get paramsList() {
+		return ['UUID', 'id'];
 	}
 }
 Object.defineProperties(

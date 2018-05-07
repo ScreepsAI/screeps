@@ -29,12 +29,6 @@ export class PostManager extends Manager {
 		return _.filter(this.entries, p => p.status > 0);
 	}
 
-	clean() {
-		// _.forEach(this.entries, (e, id) => {
-		// 	if (!e.poster && !e.target) delete this.entries[id];
-		// });
-	}
-
 	/**
 	 * 检查post列表
 	 * 并执行post

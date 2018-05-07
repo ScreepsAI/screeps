@@ -17,13 +17,13 @@ import { RoomManager } from 'Managers/RoomManager';
 
 export const loadManager = () => {
 	// global['PathManager'] = new PathManager();
-	// global['ControllerManager'] = new ControllerManager();
-	// global['ContainerManager'] = new ContainerManager();
-	// global['SourceManager'] = new SourceManager();
-	// global['SpawnManager'] = new SpawnManager();
-	// global['ExtensionManager'] = new ExtensionManager();
-	// global['ConstructionSiteManager'] = new ConstructionSiteManager();
-	// global['CreepManager'] = new CreepManager();
+	global['ControllerManager'] = new ControllerManager();
+	global['ContainerManager'] = new ContainerManager();
+	global['SourceManager'] = new SourceManager();
+	global['SpawnManager'] = new SpawnManager();
+	global['ExtensionManager'] = new ExtensionManager();
+	global['ConstructionSiteManager'] = new ConstructionSiteManager();
+	global['CreepManager'] = new CreepManager();
 	// global['ClockManager'] = new ClockManager();
 	// global['PostManager'] = new PostManager();
 	global['RoomManager'] = new RoomManager();

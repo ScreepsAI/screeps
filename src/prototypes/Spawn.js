@@ -3,13 +3,18 @@
  * Create: 2018-04-26
  * Description:
  */
-
-StructureSpawn.existCheckKeyArray = ['id'];
+import _ from 'lodash';
 class SpawnExtend extends StructureSpawn {
 	get raw() {
-		//
-		const { UUID, id } = this;
-		return { UUID, id };
+		return _.pick(this, this.paramsList);
+	}
+
+	get existCheckKeyArray() {
+		return ['id'];
+	}
+
+	get paramsList() {
+		return ['UUID', 'id'];
 	}
 }
 Object.defineProperties(

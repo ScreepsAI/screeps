@@ -6,10 +6,10 @@ export class CreepManager extends Manager {
 		super('creep', Creep);
 	}
 
-	clean() {
-		_.forEach(Object.keys(Memory.creeps), creepName => {
-			const e = Game.creeps[creepName];
-			if (!e) delete Memory.creeps[creepName];
-		});
-	}
+	// clean() {
+	// 	_.forEach(Object.keys(Memory.creeps), creepName => {
+	// 		const e = Game.creeps[creepName];
+	// 		if (!e) delete Memory.creeps[creepName];
+	// 	});
+	// }
 }

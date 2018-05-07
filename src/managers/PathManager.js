@@ -60,6 +60,4 @@ export class PathManager extends Manager {
 	getByIndex(index) {
 		return this.entries[index];
 	}
-
-	clean() {}
 }

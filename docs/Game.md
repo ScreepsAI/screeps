@@ -89,8 +89,8 @@ creep可以理解为可以通过代码操控的小兵，可以移动，包含各
 >设计数据管理模型：
 >
 >1. MemoryCache		对于Memory的管理
->	. RuntimeCache		对于内存实例对象的管理
->	. TickCache			对于单帧缓存的管理
+>2. RuntimeCache		对于内存实例对象的管理
+>3. TickCache			对于单帧缓存的管理
 >
 >数据管理框架：Manager
 >

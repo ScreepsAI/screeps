@@ -1,17 +1,26 @@
 import * as _ from 'lodash';
+
 /**
  * Creep
  */
-
-Creep.existCheckKeyArray = ['id'];
+import _ from 'lodash';
 class CreepExtend extends Creep {
 	get raw() {
-		const { UUID, id } = this;
-		return { UUID, id };
+		return _.pick(this, this.paramsList);
 	}
+
+	get existCheckKeyArray() {
+		return ['id'];
+	}
+
+	get paramsList() {
+		return ['UUID', 'id'];
+	}
+
 	get isHurt() {
 		return this.hits < this.hitsMax;
 	}
+
 	/**
 	 * 判断creep是否用指定array中的part类型，有一个就返回
 	 */
@@ -24,12 +33,14 @@ class CreepExtend extends Creep {
 		}
 		return false;
 	}
+
 	/**
 	 * 判断是否有可用的part
 	 */
 	hasActiveBodyparts(partTypes) {
 		return this.hasBodyParts(partTypes, this.body.length - Math.ceil(this.hits * 0.01));
 	}
+
 	/**
 	 * 获取指定类型的部件数量
 	 */
@@ -37,4 +48,5 @@ class CreepExtend extends Creep {
 		return null;
 	}
 }
+
 Object.defineProperties(Creep.prototype, Object.getOwnPropertyDescriptors(CreepExtend.prototype));

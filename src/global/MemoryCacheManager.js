@@ -33,15 +33,23 @@ export class MemoryCacheManager {
 		return entries;
 	}
 
-	add(entry) {
+	add(entry, ignoreExist) {
 		if (entry === undefined) throw new Error('entry is undefined');
 		if (entry.UUID === undefined) throw new Error('entry has not a UUID');
 		if (entry.raw === undefined) throw new Error('entry has not raw param');
-		if (this.checkExist(entry)) throw new Error('exist entry');
+		if (this.checkExist(entry) && !ignoreExist) Log.warn('entry has existed');
 		else return (Memory[`${this.entryName}s`][entry.UUID] = entry.raw);
 	}
 
-	modify() {}
+	modify(entry, modifyOptions) {
+		if (entry === undefined) throw new Error('entry is undefined');
+		if (entry.UUID === undefined) throw new Error('entry has not a UUID');
+		if (entry.raw === undefined) throw new Error('entry has not raw param');
+		if (this.checkExist(entry)) {
+			entry = Object.assign(entry, modifyOptions);
+			return (Memory[`${this.entryName}s`][entry.UUID] = entry.raw);
+		} else throw new Error('entry is not exist');
+	}
 
 	delete(UUID) {
 		if (UUID === undefined) throw new Error('UUID is undefined');

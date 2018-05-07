@@ -34,36 +34,65 @@ export class Manager {
 
 		// 再考虑运行时缓存
 		const runtimeEntry = this.runtimeCaches.get(UUID);
-		if (runtimeEntry) return this.tickCaches.push(runtimeEntry); //找到后进行单帧缓存
+		if (runtimeEntry) return this.tickCaches.add(runtimeEntry); //找到后进行单帧缓存
 
 		// 基本不会去找持久化缓存
 		let entry;
 		const memoryEntry = this.memoryCaches.get(UUID);
 		if (memoryEntry) entry = instantiate(memoryEntry, this.entryClass);
 		if (entry) {
-			this.runtimeCaches.push(entry);
-			return this.tickCaches.push(entry);
+			this.runtimeCaches.add(entry);
+			return this.tickCaches.add(entry);
 		}
 		return undefined;
 	}
 
-	getEntries() {
-		return this.runtimeCaches.getEntries();
+	get entries() {
+		const that = this;
+		return _.forEach(this.runtimeCaches.getEntries(), (entry, UUID) => that.get(UUID));
 	}
 
-	add(entry) {
-		if (this.checkExist(entry)) {
+	/**
+	 * 添加对象
+	 * 生成UUID
+	 * 同时存储到runtime和memory中
+	 * @param entry
+	 * @param ignoreExist 是否要忽略校验是否已存在
+	 */
+	add(entry, ignoreExist) {
+		if (this.checkExist(entry) === false || ignoreExist) {
 			entry.UUID = UUID();
-			this.memoryCaches.push(entry);
-			this.runtimeCaches.push(entry);
-		} else Log.error(`exist entry: ${this.entryName}`);
-	}
-
-	addEntries(objs) {
-		if (_.isArray(objs)) {
-			_.each(objs, obj => this.add(obj));
+			this.runtimeCaches.add(entry, ignoreExist);
 		}
 	}
+
+	/**
+	 * @param entries
+	 * @param ignoreExist 是否要忽略校验是否已存在
+	 */
+	addEntries(entries, ignoreExist) {
+		if (_.isArray(entries)) {
+			_.each(entries, entry => this.add(entry, ignoreExist));
+		} else Log.warn('params is not an array');
+	}
+
+	/**
+	 * @param entry
+	 * @param modifyOptions 修改字典
+	 */
+	modify(entry, modifyOptions) {
+		if (this.checkExist(entry) === true) {
+			let validOptions = {};
+			_.forEach(modifyOptions, (option, key) => {
+				if (key in this.entryClass.existCheckKeyArray) {
+					// 过滤出有效的修改字段
+					validOptions[key] = option;
+				}
+			});
+			this.runtimeCaches.modify(entry, validOptions);
+		}
+	}
+
 	checkExist(entry) {
 		if (entry === undefined) throw new Error('entry is undefined');
 		if (entry.UUID) return true;
