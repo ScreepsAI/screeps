@@ -9,8 +9,6 @@ export class RoomManager extends Manager {
 		super('RoomManager');
 	}
 
-	state = {};
-
 	events = {
 		onSitesChange: new GameEvent(require('./Event').onSitesChange),
 		onStructuresChanged: new GameEvent(require('./Event').onStructuresChanged),
