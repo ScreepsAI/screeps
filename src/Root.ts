@@ -44,6 +44,8 @@ export class Root extends Component {
 	private prototypes() {
 		require('./prototypes/Flag').install();
 		require('./prototypes/Room').install();
+		require('./prototypes/RoomPostion').install();
+		require('./prototypes/RoomObject').install();
 		require('./prototypes/Creep').install();
 	}
 
