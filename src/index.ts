@@ -26,15 +26,16 @@ class Core extends Component {
 		super('Core');
 	}
 
-	componentWillMount() {
+	componentWillRun() {
 		if (_.isUndefined(global.isRoot)) Loop(Root);
+		State.firstLoop = !!_.isUndefined(State.firstLoop);
 	}
 
-	componentDidMount() {
-		Game.cacheTime = Game.time;
+	componentDidRun() {
+		State.cacheTime = Game.time;
 	}
 
-	render() {
+	run() {
 		Loop(Process);
 	}
 }

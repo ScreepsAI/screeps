@@ -12,18 +12,18 @@ export abstract class Component {
 		_.assign(this.state, value);
 	}
 
-	componentWillMount(): void {}
+	componentWillRun(): void {}
 
-	componentDidMount(): void {}
+	componentDidRun(): void {}
 
-	abstract render(): any;
+	abstract run(): any;
 
 	protected loop() {
 		try {
-			this.componentWillMount();
-			const render = this.render();
-			if (render) console.log(render);
-			this.componentDidMount();
+			this.componentWillRun();
+			const run = this.run();
+			if (run) console.log(run);
+			this.componentDidRun();
 		} catch (e) {
 			console.log(`<span style='color:red; font-weight: 600'>${`[${this.namespace}] Error:`}</span>`);
 			ErrorMapper.handleError(e);

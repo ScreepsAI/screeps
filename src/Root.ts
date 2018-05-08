@@ -1,6 +1,5 @@
-import { Install, getUsername } from './utils';
+import { Install } from './utils';
 import { Component } from './lib';
-import { InstallProtoype } from './prototypes';
 
 export class Root extends Component {
 	static namespace = 'Root';
@@ -13,24 +12,26 @@ export class Root extends Component {
 		cpuBeforeInstall: 0,
 	};
 
-	componentWillMount() {
+	componentWillRun() {
 		console.log(String.fromCodePoint(0x231b), 'Code Reloading ...');
 		this.setState({ cpuBeforeInstall: Game.cpu.getUsed() });
 	}
 
-	componentDidMount() {
+	componentDidRun() {
 		global.isRoot = true;
 		Log.success('Root Done', Dye.grey(`cpu-cost:${(Game.cpu.getUsed() - this.state.cpuBeforeInstall).toFixed(2)}`));
 	}
 
-	render() {
-		this.config();
+	run() {
+		this.constants();
 		this.utils();
+		this.prototypes();
 		this.modules();
+		this.managers();
 	}
 
-	private config() {
-		Install('_ME', getUsername);
+	private constants() {
+		Install(global, require('./Constants').Constants);
 		Install(global, require('config'));
 	}
 
@@ -40,11 +41,25 @@ export class Root extends Component {
 		});
 	}
 
+	private prototypes() {
+		require('./prototypes/Flag').install();
+		require('./prototypes/Room').install();
+		require('./prototypes/Creep').install();
+	}
+
 	private modules() {
-		InstallProtoype();
 		Install(global, {
+			State: {},
 			Dye: new (require('./modules/Dye')).Dye(),
 			Log: new (require('./modules/Log')).Log(),
+		});
+	}
+
+	private managers() {
+		Install(global, {
+			RoomManager: new (require('./managers/RoomManager')).RoomManager(),
+			CreepManager: new (require('./managers/CreepManager')).CreepManager(),
+			FlagManager: new (require('./managers/FlagManager')).FlagManager(),
 		});
 	}
 }

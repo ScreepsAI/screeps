@@ -1,4 +1,4 @@
-class FlagExtend extends Flag {
+class CreepExtend extends Creep {
 	// ////////////////////////////////////////////////////////////////////
 	// cache
 	// ////////////////////////////////////////////////////////////////////
@@ -15,6 +15,10 @@ class FlagExtend extends Flag {
 	get print(): string {
 		return this.cache('print', () => Util.link(this.pos.roomName, this.name));
 	}
+
+	get hostile(): boolean {
+		return this.cache('hostile', () => !this.my && !_.include(WHITELIST, this.owner.username));
+	}
 }
 
-export const install = () => Util.define(Flag, FlagExtend);
+export const install = () => Util.define(Creep, CreepExtend);

@@ -46,12 +46,12 @@ export class Log {
 	}
 
 	public room(room: Room | string, ...content: any[]): void {
-		const roomUrl = _.isString(room) ? Util.makeRoomUrl(<string>room) : (<Room>room).print;
+		const roomUrl = _.isString(room) ? Util.link(<string>room) : (<Room>room).print;
 		this.module(Util.emoji.home, roomUrl, content);
 	}
 
 	public flag(flag: Flag | string, ...content: any[]): void {
-		const flagUrl = _.isString(flag) ? Util.makeFlagUrl(<string>flag) : (<Flag>flag).print;
+		const flagUrl = _.isString(flag) ? Game.flags[flag].print : (<Flag>flag).print;
 		this.module(Util.emoji.flag, flagUrl, content);
 	}
 
