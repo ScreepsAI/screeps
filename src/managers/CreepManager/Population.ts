@@ -1,0 +1,130 @@
+import { Manager } from '../';
+
+export class CreepPopulation extends Manager {
+	manager: CreepManager;
+
+	constructor(manager: CreepManager) {
+		super('CreepPopulation');
+		this.manager = manager;
+	}
+
+	state: {
+		died: string[];
+		spawned: string[];
+	};
+
+	fresh(): void {
+		this.state = {
+			died: [],
+			spawned: [],
+		};
+	}
+
+	register(): void {
+		this.manager.events.died.on((creepName: string) => {
+			const memory = Memory.creeps[creepName];
+			Log.room(memory.roomName, memory.ttl > 1 ? this.log.killed(creepName) : this.log.dead(creepName));
+		});
+
+		this.manager.events.spawningStarted.on((creepName: string) => {
+			const memory = Memory.creeps[creepName];
+			Log.room(memory.roomName, this.log.spawning(creepName));
+		});
+
+		this.manager.events.spawningCompleted.on((creepName: string) => {
+			const memory = Memory.creeps[creepName];
+			Log.room(memory.roomName, this.log.born(creepName));
+		});
+	}
+
+	analyze(): void {
+		_.forEach(Memory.creeps, (memory, name: string) => {
+			const creep = Game.creeps[name];
+			if (_.isUndefined(creep)) {
+				this.state.died.push(name);
+				return;
+			}
+			if (!creep.spawning) {
+				this.handleRoot(memory, creep);
+				this.handleFlag(memory, creep);
+				this.handleAction(memory, creep);
+			}
+		});
+		this.countCreep();
+	}
+
+	run(): void {
+		_.forEach(this.state.spawned, (creepName: string) => {
+			this.manager.events.spawningCompleted.handle(creepName);
+		});
+	}
+
+	cleanup(): void {
+		_.forEach(this.state.died, (creepName: string) => {
+			this.manager.events.died.handle(creepName);
+			delete Memory.creeps[creepName];
+		});
+	}
+
+	private handleRoot(memory: CreepMemory, creep: Creep): void {
+		if (!memory.spawned) {
+			memory.spawned = true;
+			this.state.spawned.push(creep.name);
+		}
+		memory.ttl = creep.ticksToLive || 0;
+		memory.roomName = creep.pos.roomName;
+		if (memory.renewTicks && memory.ttl <= memory.renewTicks) memory.renewCheck = true;
+	}
+
+	private countCreep(): void {
+		_.forEach(Memory.creeps, memory => {
+			const { creepType, actionName, roomName } = memory;
+			const room = Game.rooms[roomName];
+			if (_.isUndefined(room.population))
+				room.population = {
+					typeCount: {},
+					actionCount: {},
+				};
+			const pop = room.population;
+			if (creepType)
+				_.isUndefined(pop.actionCount[creepType]) ? (pop.typeCount[creepType] = 1) : pop.typeCount[creepType]++;
+
+			if (actionName)
+				_.isUndefined(pop.actionCount[actionName]) ? (pop.actionCount[actionName] = 1) : pop.actionCount[actionName]++;
+		});
+	}
+
+	private handleFlag(memory: CreepMemory, creep: Creep): void {
+		delete creep.flag;
+		if (_.isUndefined(memory.flagName)) return;
+		const flag = Game.flags[memory.flagName as string];
+		if (_.isUndefined(flag)) {
+			delete memory.flagName;
+		} else {
+			this.manager.registerFlag(creep, flag);
+		}
+	}
+
+	private handleAction(memory: CreepMemory, creep: Creep): void {
+		delete creep.action;
+		delete creep.target;
+		const action = memory.actionName ? this.manager.actions[memory.actionName] : null;
+		const target = memory.targetId ? Game.getObjectById(memory.targetId) : null;
+
+		if (action && target && Creep !== target) {
+			this.manager.registerAction(creep, action, target as Target);
+		} else {
+			delete memory.actionName;
+			delete memory.targetId;
+			creep.action = null;
+			creep.target = null;
+		}
+	}
+
+	private log = {
+		killed: (name: string) => [Util.emoji.skull, Dye.red(name, 'has been killed...')].join(' '),
+		dead: (name: string) => [Util.emoji.skull, Dye.black(name, 'was dead...')].join(' '),
+		born: (name: string) => [Util.emoji.baby, Dye.green(name, 'was born!')].join(' '),
+		spawning: (name: string) => [Util.emoji.baby, Dye.yellow(name, 'begin to spawn...')].join(' '),
+	};
+}

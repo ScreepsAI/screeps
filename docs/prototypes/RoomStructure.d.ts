@@ -1,10 +1,4 @@
-interface RoomStructureMemory {
-
-}
-
 interface RoomStructure {
-	memory: RoomStructureMemory
-
 	count:number
 
 	all: Structure[]

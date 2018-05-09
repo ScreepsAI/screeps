@@ -1,3 +1,4 @@
 interface RoomObject {
-  accessibleFields: RoomPosition[]
+	targetOf: { [creepName: string]: CreepMemory }
+	accessibleFields: RoomPosition[]
 }

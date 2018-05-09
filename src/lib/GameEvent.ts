@@ -1,13 +1,13 @@
 export class GameEvent {
-	constructor(trigger: () => boolean) {
+	constructor(trigger?: () => boolean) {
 		if (_.isUndefined(Memory.events)) Memory.events = {};
-		this.trigger = trigger;
+		if (trigger) this.trigger = trigger;
 	}
 
 	state: Function[] = [];
 
 	trigger(): boolean {
-		return false;
+		return true;
 	}
 
 	handle(e?: any): void {

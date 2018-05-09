@@ -1,19 +1,17 @@
-interface RoomMemory {
-	structures: RoomStructureMemory
-	creeps: RoomCreepMemory
-	spawnQueue: any[]
-	structuresCount: number;
-	root: number
-	check: number
-}
-
 interface Room {
 	print: string;
+	RCL: number;
 	my: boolean;
 	structures: RoomStructure
 	creeps: RoomCreep
+	resources: RoomResouce
 	constructionSites: ConstructionSite[]
-	sources: Source[]
-	minerals: Mineral[]
+	sources: { [id: string]: any }
+	minerals: { [id: string]: any }
 	spawns: StructureSpawn[]
+	freeSpawns: StructureSpawn[]
+	population: {
+		typeCount: { [type: string]: number },
+		actionCount: { [type: string]: number },
+	}
 }

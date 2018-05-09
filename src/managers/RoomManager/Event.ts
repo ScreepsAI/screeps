@@ -4,7 +4,7 @@ const defaultValue = {
 	isChange: true,
 };
 
-export const onSitesChange = (): boolean => {
+export const sitesChange = (): boolean => {
 	const totalSites = _.get(Memory.events, 'totalSites', defaultValue);
 	const { time, count } = totalSites;
 	if (Game.time !== time) {
@@ -18,7 +18,7 @@ export const onSitesChange = (): boolean => {
 	return Memory.events.totalSites.isChange;
 };
 
-export const onStructuresChanged = (): boolean => {
+export const structuresChanged = (): boolean => {
 	const totalStructures = _.get(Memory.events, 'totalStructures', defaultValue);
 	const { time, count } = totalStructures;
 	if (Game.time !== time) {

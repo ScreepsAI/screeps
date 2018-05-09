@@ -5,5 +5,5 @@ interface GameEvent {
 
 	fresh(): void
 
-	handle(): void
+	handle(e?: any): void
 }

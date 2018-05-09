@@ -5,7 +5,18 @@ export class RoomSource extends RoomModule {
 		super('RoomSource', manager);
 	}
 
-	register(): void {}
+	analyzePerRoom(room: Room): void {
+		if (State.firstLoop || this.manager.needFreshMemory) this.saveSources(room);
+	}
 
-	analyzePerRoom(room: Room): void {}
+	private saveSources(room: Room) {
+		if (_.isUndefined(room.sources)) room.sources = {};
+		_.forEach(room.resources.sources, s => {
+			room.sources[s.id] = {
+				accessibleFields: s.accessibleFields,
+				link: null,
+				container: null,
+			};
+		});
+	}
 }

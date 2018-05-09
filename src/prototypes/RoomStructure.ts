@@ -1,11 +1,7 @@
 export class RoomStructure {
 	room: Room;
-	memory: object;
-
 	constructor(room: Room) {
 		this.room = room;
-		if (_.isUndefined(room.memory.structures)) room.memory.structures = {};
-		this.memory = room.memory.structures;
 	}
 
 	// ////////////////////////////////////////////////////////////////////

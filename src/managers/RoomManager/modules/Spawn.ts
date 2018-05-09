@@ -14,7 +14,7 @@ export class RoomSpawn extends RoomModule {
 	}
 
 	register(): void {
-		this.manager.events.onStructuresChanged.on(this.saveSpawn);
+		this.manager.events.structuresChanged.on(this.saveSpawn);
 	}
 
 	registerPerRoom(room: Room): void {

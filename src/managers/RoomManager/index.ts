@@ -10,8 +10,8 @@ export class RoomManager extends Manager {
 	}
 
 	events = {
-		onSitesChange: new GameEvent(require('./Event').onSitesChange),
-		onStructuresChanged: new GameEvent(require('./Event').onStructuresChanged),
+		sitesChange: new GameEvent(require('./Event').sitesChange),
+		structuresChanged: new GameEvent(require('./Event').structuresChanged),
 	};
 
 	modules = {
@@ -45,7 +45,7 @@ export class RoomManager extends Manager {
 
 	register(): void {
 		// global
-		this.events.onStructuresChanged.on((room: Room) => {
+		this.events.structuresChanged.on((room: Room) => {
 			room.memory.structuresCount = room.structures.count;
 		});
 		this.roomMoudles('register');
