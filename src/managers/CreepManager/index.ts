@@ -4,6 +4,7 @@ import { GameEvent } from '../../lib';
 export class CreepManager extends Manager {
 	constructor() {
 		super('CreepManager');
+		if (_.isUndefined(Memory.creeps)) Memory.creeps = {};
 	}
 
 	population = new (require('./Population')).CreepPopulation(this);
@@ -27,32 +28,63 @@ export class CreepManager extends Manager {
 	// ////////////////////////////////////////////////////////////////////
 
 	fresh(): void {
+		_.forEach(this.events, event => event.fresh());
 		this.population.fresh();
 	}
 
 	register(): void {
 		this.population.register();
+		this.creepMoudle('setups', 'register');
+		this.creepMoudle('behaviours', 'register');
+		this.creepMoudle('actions', 'register');
 	}
 
 	analyze(): void {
 		this.population.analyze();
+		_.forEach(Memory.creeps, (memory, name: string) => {
+			this.population.analyzePer(memory, name);
+		});
+
+		this.creepMoudle('setups', 'analyze');
+		this.creepMoudle('behaviours', 'analyze');
+		this.creepMoudle('actions', 'analyze');
+
 		_.forEach(Game.rooms, room => {
-			_.forEach(this.setups, setup => (setup.checkPerRoom(room) ? setup.analyzePerRoom(room) : null));
+			this.creepMoudlePer(room, 'setups', 'analyze');
 		});
 	}
 
 	run(): void {
 		this.population.run();
+		this.creepMoudle('setups', 'run');
+		this.creepMoudle('behaviours', 'run');
+		this.creepMoudle('actions', 'run');
+
 		_.forEach(Game.creeps, creep => {});
 	}
 
 	cleanup(): void {
 		this.population.cleanup();
+		this.creepMoudle('setups', 'cleanup');
+		this.creepMoudle('behaviours', 'cleanup');
+		this.creepMoudle('actions', 'cleanup');
 	}
 
 	// ////////////////////////////////////////////////////////////////////
 	// Util
 	// ////////////////////////////////////////////////////////////////////
+
+	private creepMoudle(module: string, prototype: string): void {
+		_.forEach(this[module], m => {
+			if (m.check()) m[prototype]();
+		});
+	}
+
+	private creepMoudlePer(arg: Room | Creep, module: string, prototype: string): void {
+		_.forEach(this[module], m => {
+			if (m.checkPer(arg)) m[prototype + 'Per'](arg);
+		});
+	}
 
 	registerAction(creep: Creep, action: CreepAction, target: Target): void {
 		const memory = creep.memory;

@@ -46,6 +46,8 @@ export class Root extends Component {
 		require('./prototypes/Room').install();
 		require('./prototypes/RoomPostion').install();
 		require('./prototypes/RoomObject').install();
+		require('./prototypes/StructureSpawn').install();
+		require('./prototypes/Source').install();
 		require('./prototypes/Creep').install();
 	}
 

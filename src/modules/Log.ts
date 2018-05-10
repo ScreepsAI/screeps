@@ -47,7 +47,7 @@ export class Log {
 
 	public room(room: Room | string, ...content: any[]): void {
 		const roomUrl = _.isString(room) ? Util.link(<string>room) : (<Room>room).print;
-		this.module(Util.emoji.home, roomUrl, content);
+		console.log(Util.emoji.home, Dye.link(roomUrl), content);
 	}
 
 	public flag(flag: Flag | string, ...content: any[]): void {

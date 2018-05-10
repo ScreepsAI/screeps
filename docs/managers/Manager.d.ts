@@ -11,3 +11,19 @@ interface Manager {
 
 	cleanup(): void
 }
+
+interface Module extends Manager {
+	check(): boolean
+
+	checkPer(room: Room): boolean
+
+	freshPer(room: Room): void
+
+	registerPer(room: Room): void
+
+	analyzePer(room: Room): void
+
+	runPer(room: Room): void
+
+	cleanupPer(room: Room): void
+}

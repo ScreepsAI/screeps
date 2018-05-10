@@ -10,8 +10,8 @@ class RoomObjectExtend extends RoomObject {
 	/// ///////////////////////////////////////////////////////////////////
 	// extend
 	/// ///////////////////////////////////////////////////////////////////
-	get accessibleFields(): RoomPosition[] {
-		return this.cache('accessibleFields', () => _.filter(this.pos.adjacent, pos => pos.accessible));
+	accessible(radius: number): RoomPosition[] {
+		return this.cache(`accessible${radius}`, () => _.filter(this.pos.radius(radius), pos => pos.accessible));
 	}
 }
 

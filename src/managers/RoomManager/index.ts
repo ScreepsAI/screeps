@@ -7,6 +7,7 @@ export class RoomManager extends Manager {
 
 	constructor() {
 		super('RoomManager');
+		if (_.isUndefined(Memory.rooms)) Memory.rooms = {};
 	}
 
 	events = {
@@ -30,7 +31,7 @@ export class RoomManager extends Manager {
 
 		// global
 		_.forEach(this.events, event => event.fresh());
-		this.roomMoudles('fresh');
+		this.roomMoudle('fresh');
 
 		// room
 		_.forEach(this.rooms, (room: Room) => {
@@ -39,7 +40,7 @@ export class RoomManager extends Manager {
 			// memory.check
 			room.memory.check = Game.time;
 			// module
-			this.roomMoudlesPerRoom('freshPerRoom', room);
+			this.roomMoudlePer(room, 'fresh');
 		});
 	}
 
@@ -48,47 +49,47 @@ export class RoomManager extends Manager {
 		this.events.structuresChanged.on((room: Room) => {
 			room.memory.structuresCount = room.structures.count;
 		});
-		this.roomMoudles('register');
+		this.roomMoudle('register');
 
 		// room
 		_.forEach(this.rooms, (room: Room) => {
 			// module
-			this.roomMoudlesPerRoom('registerPerRoom', room);
+			this.roomMoudlePer(room, 'register');
 		});
 	}
 
 	analyze(): void {
 		// global
-		this.roomMoudles('analyze');
+		this.roomMoudle('analyze');
 
 		// room
 		_.forEach(this.rooms, (room: Room) => {
 			// module
-			this.roomMoudlesPerRoom('analyzePerRoom', room);
+			this.roomMoudlePer(room, 'analyze');
 		});
 	}
 
 	run(): void {
 		// global
-		this.roomMoudles('run');
+		this.roomMoudle('run');
 
 		// room
 		_.forEach(this.rooms, (room: Room) => {
 			// event
 			_.forEach(this.events, event => event.handle(room));
 			// module
-			this.roomMoudlesPerRoom('runPerRoom', room);
+			this.roomMoudlePer(room, 'run');
 		});
 	}
 
 	cleanup(): void {
 		// global
-		this.roomMoudles('cleanup');
+		this.roomMoudle('cleanup');
 
 		// room
 		_.forEach(this.rooms, (room: Room) => {
 			// module
-			this.roomMoudlesPerRoom('cleanupPerRoom', room);
+			this.roomMoudlePer(room, 'cleanup');
 		});
 
 		// memory
@@ -102,15 +103,15 @@ export class RoomManager extends Manager {
 	// Other
 	// ////////////////////////////////////////////////////////////////////
 
-	private roomMoudles(func: string): void {
+	private roomMoudle(prototype: string): void {
 		_.forEach(this.modules, module => {
-			if (module.check()) module[func]();
+			if (module.check()) module[prototype]();
 		});
 	}
 
-	private roomMoudlesPerRoom(func: string, room: Room): void {
+	private roomMoudlePer(room: Room, prototype: string): void {
 		_.forEach(this.modules, module => {
-			if (module.checkPerRoom(room)) module[func](room);
+			if (module.checkPer(room)) module[prototype + 'Per'](room);
 		});
 	}
 

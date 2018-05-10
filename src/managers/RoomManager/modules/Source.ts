@@ -5,17 +5,17 @@ export class RoomSource extends RoomModule {
 		super('RoomSource', manager);
 	}
 
-	analyzePerRoom(room: Room): void {
+	analyzePer(room: Room): void {
 		if (State.firstLoop || this.manager.needFreshMemory) this.saveSources(room);
 	}
 
 	private saveSources(room: Room) {
-		if (_.isUndefined(room.sources)) room.sources = {};
+		_.set(room.memory, 'sources', {});
 		_.forEach(room.resources.sources, s => {
-			room.sources[s.id] = {
+			room.memory.sources[s.id] = {
 				accessibleFields: s.accessibleFields,
-				link: null,
-				container: null,
+				container: s.container,
+				link: s.link,
 			};
 		});
 	}

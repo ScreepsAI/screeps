@@ -24,4 +24,17 @@ export const Util = {
 		});
 		return ids;
 	},
+	getDiretion(from: Pos, to: Pos): number {
+		const x = to.x - from.x;
+		const y = to.y - from.y;
+		if (x === 0 && y < 0) return TOP;
+		if (x > 0 && y < 0) return TOP_RIGHT;
+		if (x < 0 && y < 0) return TOP_LEFT;
+		if (x === 0 && y > 0) return BOTTOM;
+		if (x > 0 && y > 0) return BOTTOM_RIGHT;
+		if (x < 0 && y > 0) return BOTTOM_LEFT;
+		if (x > 0 && y === 0) return RIGHT;
+		if (x < 0 && y === 0) return LEFT;
+		return 0;
+	},
 };

@@ -1,6 +1,6 @@
-import { Manager } from '../';
+import { Module } from '../index';
 
-export abstract class CreepSetup extends Manager {
+export abstract class CreepSetup extends Module {
 	manager: CreepManager;
 
 	protected constructor(namespace: string, manager: CreepManager) {
@@ -16,16 +16,16 @@ export abstract class CreepSetup extends Manager {
 		this.state = {};
 	}
 
-	checkPerRoom(room: Room): boolean {
-		return room.my && room.RCL >= this.minControllerLevel && room.freeSpawns.length > 0;
+	checkPer(room: Room): boolean {
+		if (!room.my || room.RCL < this.minControllerLevel || room.freeSpawns.length === 0) return false;
+		return _.isUndefined(room.spawnQueue[this.namespace]);
 	}
 
-	analyzePerRoom(room: Room): void {
-		this.state[room.name] = {};
+	analyzePer(room: Room): void {
 		const setup = _.clone(this.RCL[room.RCL]) as RclSetup;
 		// maxCount
 		if (_.isFunction(setup.maxCount)) setup.maxCount = setup.maxCount(room);
-		if (setup.maxCount === 0) return;
+		if (setup.maxCount === 0 || setup.maxCount <= room.getBehaviourCount(this.namespace)) return;
 		// fixedBody
 		if (_.isUndefined(setup.fixedBody)) setup.fixedBody = [];
 		// maxMulti
@@ -40,11 +40,13 @@ export abstract class CreepSetup extends Manager {
 		const fixed = this.bodyFormat(setup.fixedBody);
 		const multi = _.flatten(_.fill(Array(setup.maxMulti), this.bodyFormat(setup.multiBody)));
 		const body = this.bodySort(fixed.concat(multi));
-		this.state[room.name] = {
-			body: body,
-			maxCount: setup.maxCount,
-			minEnergyAvailable: _.min([room.energyCapacityAvailable, this.bodyCost(body)]),
-		};
+		const cost = this.bodyCost(body);
+		const behaviour = this.namespace;
+		const count = _.min([setup.maxCount - room.getBehaviourCount(behaviour), room.spawns.length]);
+		let i = 1;
+		let name: string = '';
+		while (name === '' || _.get(Memory.creeps, name)) name = [behaviour, cost, i++].join('-');
+		room.addSpawnQueue({ name, body, behaviour, cost, count });
 	}
 
 	// ////////////////////////////////////////////////////////////////////

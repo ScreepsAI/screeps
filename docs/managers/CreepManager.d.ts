@@ -31,7 +31,7 @@ interface CreepEvent {
 // CreepPopulation
 // ////////////////////////////////////////////////////////////////////
 
-interface CreepPopulation extends Manager {
+interface CreepPopulation extends Module {
 
 }
 
@@ -39,7 +39,7 @@ interface CreepPopulation extends Manager {
 // CreepSetup
 // ////////////////////////////////////////////////////////////////////
 
-interface CreepSetup extends Manager {
+interface CreepSetup extends Module {
 	state: {
 		[roomName: string]: {
 			body: BodyPartConstant[],
@@ -69,6 +69,14 @@ interface RclSetupRaw {
 	maxCount: number | Function,
 }
 
+interface SpawnOrder {
+	name: string,
+	behaviour: string,
+	body: BodyPartConstant[],
+	cost: number,
+	count: number
+}
+
 interface RCL {
 	1: RclSetupRaw,
 	2: RclSetupRaw,
@@ -84,7 +92,7 @@ interface RCL {
 // CreepBehaviour
 // ////////////////////////////////////////////////////////////////////
 
-interface CreepBehaviour extends Manager {
+interface CreepBehaviour extends Module {
 
 }
 
@@ -92,6 +100,6 @@ interface CreepBehaviour extends Manager {
 // CreepAction
 // ////////////////////////////////////////////////////////////////////
 
-interface CreepAction extends Manager {
+interface CreepAction extends Module {
 
 }

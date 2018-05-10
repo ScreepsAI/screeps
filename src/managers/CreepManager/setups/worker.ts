@@ -5,6 +5,12 @@ export class WorkerSetup extends CreepSetup {
 		super('worker', manager);
 	}
 
+	checkPer(room: Room): boolean {
+		if (!room.my || room.RCL < this.minControllerLevel || room.freeSpawns.length === 0) return false;
+		if (room.RCL >= 2 && !room.hasMinerOrHauler && room.spawnQueue['worker'].cost > room.energyAvailable) return true;
+		return _.isUndefined(room.spawnQueue['worker']);
+	}
+
 	// ////////////////////////////////////////////////////////////////////
 	// Setup
 	// ////////////////////////////////////////////////////////////////////
@@ -42,23 +48,15 @@ export class WorkerSetup extends CreepSetup {
 
 	maxCountWorker(room: Room): number {
 		let count = 0;
-		if (!this.hasMinerOrHauler(room)) {
-			room.RCL <= 2 ? _.forEach(room.sources, s => (count += s.accessibleFields.length)) : count++;
+		if (!room.hasMinerOrHauler) {
+			room.RCL <= 2 ? _.forEach(room.sources, s => (count += s.accessibleFields)) : count++;
 		}
 		if (room.constructionSites.length > 0) count++;
 		return count;
 	}
 
 	maxMultiWorker(room: Room, setup: RclSetup): number {
-		return this.hasMinerOrHauler(room) ? this.maxMulti(room, setup) : this.minMulti(room, setup);
-	}
-
-	hasMinerOrHauler(room: Room): boolean {
-		if (_.isUndefined(room.population)) return false;
-		const { miner, hauler } = room.population.typeCount;
-		const hasMiner = !_.isUndefined(miner) && miner > 0;
-		const hasHauler = !_.isUndefined(hauler) && hauler > 0;
-		return hasMiner || hasHauler;
+		return room.hasMinerOrHauler ? this.maxMulti(room, setup) : this.minMulti(room, setup);
 	}
 
 	// ////////////////////////////////////////////////////////////////////

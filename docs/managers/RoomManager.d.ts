@@ -1,6 +1,7 @@
 declare const RoomManager: RoomManager
 
 interface RoomManager extends Manager {
+	events: RoomEvent
 	rooms: { [roomName: string]: Room }
 	memory: { [roomName: string]: RoomMemory }
 	needFreshMemory: boolean;
@@ -19,6 +20,6 @@ interface RoomEvent {
 // RoomModule
 // ////////////////////////////////////////////////////////////////////
 
-interface RoomModule extends Manager {
+interface RoomModule extends Module {
 
 }

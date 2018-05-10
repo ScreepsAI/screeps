@@ -1,6 +1,6 @@
-import { Manager } from '../';
+import { Module } from '../';
 
-export class CreepPopulation extends Manager {
+export class CreepPopulation extends Module {
 	manager: CreepManager;
 
 	constructor(manager: CreepManager) {
@@ -23,34 +23,32 @@ export class CreepPopulation extends Manager {
 	register(): void {
 		this.manager.events.died.on((creepName: string) => {
 			const memory = Memory.creeps[creepName];
-			Log.room(memory.roomName, memory.ttl > 1 ? this.log.killed(creepName) : this.log.dead(creepName));
+			Log.room(memory.roomName || 'unknow', memory.ttl > 1 ? this.log.killed(creepName) : this.log.dead(creepName));
 		});
 
 		this.manager.events.spawningStarted.on((creepName: string) => {
 			const memory = Memory.creeps[creepName];
-			Log.room(memory.roomName, this.log.spawning(creepName));
+			Log.room(memory.roomName || 'unknow', this.log.spawning(creepName));
 		});
 
 		this.manager.events.spawningCompleted.on((creepName: string) => {
 			const memory = Memory.creeps[creepName];
-			Log.room(memory.roomName, this.log.born(creepName));
+			Log.room(memory.roomName || 'unknow', this.log.born(creepName));
 		});
 	}
 
-	analyze(): void {
-		_.forEach(Memory.creeps, (memory, name: string) => {
-			const creep = Game.creeps[name];
-			if (_.isUndefined(creep)) {
-				this.state.died.push(name);
-				return;
-			}
-			if (!creep.spawning) {
-				this.handleRoot(memory, creep);
-				this.handleFlag(memory, creep);
-				this.handleAction(memory, creep);
-			}
-		});
-		this.countCreep();
+	analyzePer(memory: CreepMemory, name: string): void {
+		const creep = Game.creeps[name];
+		if (_.isUndefined(creep)) {
+			this.state.died.push(name);
+			return;
+		}
+		if (!creep.spawning) {
+			this.handleRoot(memory, creep);
+			this.handleFlag(memory, creep);
+			this.handleAction(memory, creep);
+		}
+		this.countCreep(memory);
 	}
 
 	run(): void {
@@ -76,22 +74,20 @@ export class CreepPopulation extends Manager {
 		if (memory.renewTicks && memory.ttl <= memory.renewTicks) memory.renewCheck = true;
 	}
 
-	private countCreep(): void {
-		_.forEach(Memory.creeps, memory => {
-			const { creepType, actionName, roomName } = memory;
-			const room = Game.rooms[roomName];
-			if (_.isUndefined(room.population))
-				room.population = {
-					typeCount: {},
-					actionCount: {},
-				};
-			const pop = room.population;
-			if (creepType)
-				_.isUndefined(pop.actionCount[creepType]) ? (pop.typeCount[creepType] = 1) : pop.typeCount[creepType]++;
+	private countCreep(memory: CreepMemory): void {
+		const { behaviour, actionName, roomName } = memory;
+		const room = Game.rooms[roomName];
+		if (_.isUndefined(room.population))
+			room.population = {
+				behaviourCount: {},
+				actionCount: {},
+			};
+		const pop = room.population;
+		if (behaviour)
+			_.isUndefined(pop.actionCount[behaviour]) ? (pop.behaviourCount[behaviour] = 1) : pop.behaviourCount[behaviour]++;
 
-			if (actionName)
-				_.isUndefined(pop.actionCount[actionName]) ? (pop.actionCount[actionName] = 1) : pop.actionCount[actionName]++;
-		});
+		if (actionName)
+			_.isUndefined(pop.actionCount[actionName]) ? (pop.actionCount[actionName] = 1) : pop.actionCount[actionName]++;
 	}
 
 	private handleFlag(memory: CreepMemory, creep: Creep): void {

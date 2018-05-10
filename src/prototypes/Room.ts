@@ -8,34 +8,15 @@ class RoomExtend extends Room {
 	// ////////////////////////////////////////////////////////////////////
 
 	private cache(key: string, func: Function, saveMemory?: boolean): any {
-		if (_.isUndefined(this[`_${key}`])) this[`_${key}`] = func() || [];
+		if (_.isUndefined(this[`_${key}`])) this[`_${key}`] = func();
 		if (saveMemory) this.memory[key] = this[`_${key}`];
 		return this[`_${key}`];
 	}
 
-	// private memoryCache(key: string, func: Function): any {
-	// 	if (_.isUndefined(this.memory[key])) {
-	// 		let objs = func();
-	// 		this[`_${key}`] = objs;
-	// 		this.memory[key] = Util.objectsToIds(objs) || [];
-	// 		return objs;
-	// 	}
-	// 	if (_.isUndefined(this[`_${key}`])) {
-	// 		let objs = Util.getObjectsByIds(this.memory[key]);
-	// 		this[`_${key}`] = objs;
-	// 		return objs;
-	// 	}
-	// 	return this[`_${key}`];
-	// }
-
-	private readonlyCache(key: string): any {
-		let ids = this.memory[key];
-		if (_.isUndefined(ids)) return [];
-		if (_.isUndefined(this[`_${key}`])) {
-			if (!_.isArray(ids)) ids = Object.keys(ids);
-			this[`_${key}`] = Util.getObjectsByIds(ids);
-		}
-		return this[`_${key}`];
+	private memoryCache(key: string, func: Function): any {
+		const value = _.get(this.memory, key);
+		if (State.firstLoop || RoomManager.needFreshMemory || _.isUndefined(value)) return func();
+		return Util.getObjectsByIds(_.isArray(value) ? value : _.keys(value));
 	}
 
 	// ////////////////////////////////////////////////////////////////////
@@ -71,19 +52,75 @@ class RoomExtend extends Room {
 	}
 
 	get sources(): Source[] {
-		return this.readonlyCache('sources');
+		return this.memoryCache('sources', () => this.resources.sources);
 	}
 
 	get minerals(): Mineral[] {
-		return this.readonlyCache('minerals');
+		return this.memoryCache('minerals', () => this.resources.minerals);
 	}
 
 	get spawns(): StructureSpawn[] {
-		return this.readonlyCache('spawns');
+		return this.memoryCache('spawns', () => this.structures.spawns);
 	}
 
 	get freeSpawns(): StructureSpawn[] {
 		return this.cache('freeSpawns', () => _.filter(this.spawns, s => !s.spawning));
+	}
+
+	get hasMinerOrHauler(): boolean {
+		return this.cache('hasMinerOrHauler', () => {
+			return this.getBehaviourCount('miner') > 0 || this.getBehaviourCount('hauler') > 0;
+		});
+	}
+
+	getBehaviourCount(behaviour: string): number {
+		return _.get(this.population, ['behaviourCount', behaviour], 0);
+	}
+
+	getActionCount(action: string): number {
+		return _.get(this.population, ['actionCount', action], 0);
+	}
+
+	get spawnQueue(): { [behaviour: string]: SpawnOrder } {
+		return _.get(this.memory, 'spawnQueue');
+	}
+
+	addSpawnQueue(order: SpawnOrder): void {
+		if (_.isUndefined(this.memory.spawnQueue)) this.memory.spawnQueue = {};
+		this.memory.spawnQueue[order.behaviour] = order;
+	}
+
+	get center(): Pos {
+		return this.memoryCache('center', () => {
+			if (this.storage) return this.storage.pos;
+			if (this.spawns.length === 1) {
+				const pos = this.spawns[0].pos;
+				return {
+					x: pos.x,
+					y: pos.y + 2,
+				};
+			}
+		});
+	}
+
+	setCenter(center?: number | Pos, centerY?: number): void {
+		let x: number = 0;
+		let y: number = 0;
+		if (!center && !_.isUndefined(this.center)) {
+			x = this.center.x;
+			y = this.center.y;
+		} else {
+			if (center instanceof RoomPosition) {
+				x = center.x;
+				y = center.y;
+			} else if (_.isNumber(center) && _.isNumber(centerY)) {
+				x = center;
+				y = centerY;
+			}
+		}
+		if (x === 0 || y === 0) return;
+		_.set(this.memory, 'center', { x, y });
+		Log.room(this.name, Log.raw.success(`center set at (${x},${y})`));
 	}
 }
 

@@ -1,4 +1,9 @@
 interface Room {
+	population: {
+		behaviourCount: { [type: string]: number },
+		actionCount: { [type: string]: number },
+	}
+
 	print: string;
 	RCL: number;
 	my: boolean;
@@ -10,8 +15,14 @@ interface Room {
 	minerals: { [id: string]: any }
 	spawns: StructureSpawn[]
 	freeSpawns: StructureSpawn[]
-	population: {
-		typeCount: { [type: string]: number },
-		actionCount: { [type: string]: number },
-	}
+	hasMinerOrHauler:boolean
+	getBehaviourCount(behaviour: string): number
+	getActionCount(action: string): number
+
+	spawnQueue:  { [behaviour: string]: SpawnOrder }
+	addSpawnQueue(order: SpawnOrder):void
+
+	center: Pos
+
+	setCenter(center?: number | Pos, centerY?: number): void
 }

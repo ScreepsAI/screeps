@@ -1,11 +1,8 @@
 export class RoomCreep {
 	room: Room;
-	memory: object;
 
 	constructor(room: Room) {
 		this.room = room;
-		if (_.isUndefined(room.memory.creeps)) room.memory.creeps = {};
-		this.memory = room.memory.creeps;
 	}
 
 	// ////////////////////////////////////////////////////////////////////

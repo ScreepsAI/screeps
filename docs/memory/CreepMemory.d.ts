@@ -1,7 +1,10 @@
 interface CreepMemory {
+	[type: string]: any,
+
+	name: string,
 	roomName: string,
 	homeRoom: string,
-	creepType: string,
+	behaviour: string,
 	ttl: number,
 	spawned: boolean,
 	renewTicks?: number,

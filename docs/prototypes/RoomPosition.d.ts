@@ -1,12 +1,18 @@
 interface RoomPosition {
-  adjacent: RoomPosition[];
-  terrain: Terrain;
-  structures: Structure[];
-  constructionSites: ConstructionSite[];
-  creeps: Creep[];
-  accessible: boolean;
+	adjacent: RoomPosition[];
+	terrain: Terrain;
+	structures: Structure[];
+	constructionSites: ConstructionSite[];
+	creeps: Creep[];
+	accessible: boolean;
 
-  radius(radius: number): RoomPosition[];
+	radius(radius: number): RoomPosition[];
 
-  direction(direction: number): RoomPosition;
+	direction(direction: number): RoomPosition;
+}
+
+interface Pos {
+	x: number,
+	y: number,
+	roomName?: string
 }
