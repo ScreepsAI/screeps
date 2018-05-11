@@ -20,7 +20,7 @@ declare const BUILD_TIME: string;
 declare const ME: string
 declare const MEMORY_RESYNC_INTERVAL: number
 declare const MAX_REPAIR_LIMIT: RclNumber[]
-
+declare const CONSTRUCTION_PRIORITY: string[]
 // ////////////////////////////////////////////////////////////////////
 // Config
 // ////////////////////////////////////////////////////////////////////

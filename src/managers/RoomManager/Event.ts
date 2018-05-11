@@ -5,29 +5,29 @@ const defaultValue = {
 };
 
 export const sitesChange = (): boolean => {
-	const totalSites = _.get(Memory.events, 'totalSites', defaultValue);
+	const totalSites = _.get(State, 'totalSites', defaultValue);
 	const { time, count } = totalSites;
 	if (Game.time !== time) {
 		const newCount = _.size(Game.constructionSites);
-		Memory.events.totalSites = {
+		State.totalSites = {
 			count: newCount,
 			time: Game.time,
 			isChange: count !== newCount,
 		};
 	}
-	return Memory.events.totalSites.isChange;
+	return State.totalSites.isChange;
 };
 
 export const structuresChanged = (): boolean => {
-	const totalStructures = _.get(Memory.events, 'totalStructures', defaultValue);
+	const totalStructures = _.get(State, 'totalStructures', defaultValue);
 	const { time, count } = totalStructures;
 	if (Game.time !== time) {
 		const newCount = _.size(Game.structures);
-		Memory.events.totalStructures = {
+		State.totalStructures = {
 			count: newCount,
 			time: Game.time,
 			isChange: count !== newCount,
 		};
 	}
-	return Memory.events.totalStructures.isChange;
+	return State.totalStructures.isChange;
 };

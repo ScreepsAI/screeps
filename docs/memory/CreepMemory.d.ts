@@ -6,6 +6,7 @@ interface CreepMemory {
 	homeRoom: string,
 	behaviour: string,
 	ttl: number,
+	carry: StoreDefinition
 	spawned: boolean,
 	renewTicks?: number,
 	renewCheck?: boolean

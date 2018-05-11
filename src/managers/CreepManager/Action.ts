@@ -27,7 +27,7 @@ export abstract class CreepAction extends Module {
 	abstract getNewTarget(creep: Creep): Target | null;
 
 	runPer(creep: Creep): boolean {
-		if (!this.checkAction(creep)) {
+		if (creep.room.getActionCount(this.namespace) >= this.maxPerAction || !this.checkAction(creep)) {
 			creep.unAssignAction();
 			return false;
 		}
@@ -55,7 +55,7 @@ export abstract class CreepAction extends Module {
 				const direction = creep.pos.getDirectionTo(target);
 				const nextPos = Util.getDirectionPos(creep.pos, direction);
 				if (nextPos.walkable) {
-					creep.move(nextPos);
+					creep.move(direction);
 					return true;
 				}
 				if (!creep.pos.isNearTo(target)) {
@@ -67,7 +67,7 @@ export abstract class CreepAction extends Module {
 		// run work
 		const cb = this.work(creep);
 		if (cb !== OK) {
-			this.onError(creep);
+			this.onError(creep, cb);
 			return false;
 		}
 		return true;
@@ -77,7 +77,8 @@ export abstract class CreepAction extends Module {
 	onAssignment(creep: Creep, target: Target): void {}
 
 	// @ts-ignore
-	onError(creep: Creep): void {
+	onError(creep: Creep, cb: number): void {
+		Log.room(creep.room, Log.raw.error(this.namespace, cb));
 		creep.unAssignAction();
 	}
 }

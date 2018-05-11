@@ -24,7 +24,7 @@ export class WorkerBehaviour extends CreepBehaviour {
 			case stateType.onNeedEnergy:
 				return [Action.harvesting];
 			case stateType.onWork:
-				return [Action.upgrading];
+				return [Action.feeding, Action.building, Action.upgrading];
 			default:
 				delete creep.memory.state;
 				return [];

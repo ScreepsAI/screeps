@@ -35,9 +35,9 @@ export class RoomSpawn extends RoomModule {
 				if (!free) return;
 				const spawnOrder = room.spawnQueue[behaviour];
 				if (spawnOrder && spawnOrder.count > 0 && this.dealSpawnOrder(spawn, spawnOrder)) {
-					free = false;
-					spawnOrder.count--;
+					room.memory.spawnQueue[behaviour].count--;
 					if (spawnOrder.count === 0) delete room.memory.spawnQueue[behaviour];
+					free = false;
 				}
 			});
 		});
@@ -78,7 +78,7 @@ export class RoomSpawn extends RoomModule {
 			spawned: false,
 		};
 		if (spawn.direction !== 0) opts.direction = spawn.direction;
-		if (spawn.energyStructures) opts.energyStructures = spawn.energyStructures;
+		opts.energyStructures = [...spawn.room.spawns, ...spawn.room.extensions];
 		// @ts-ignore
 		const cb = spawn.spawnCreep(order.body, order.name, opts);
 		if (cb !== OK) return false;

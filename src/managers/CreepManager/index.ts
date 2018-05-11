@@ -26,6 +26,8 @@ export class CreepManager extends Manager {
 	actions = {
 		harvesting: new (require('./actions/harvesting')).ActionHarvesting(this),
 		upgrading: new (require('./actions/upgrading')).ActionUpgrading(this),
+		feeding: new (require('./actions/feeding')).ActionFeeding(this),
+		building: new (require('./actions/building')).ActionBuilding(this),
 	};
 
 	// ////////////////////////////////////////////////////////////////////
@@ -45,11 +47,10 @@ export class CreepManager extends Manager {
 	}
 
 	analyze(): void {
-		this.population.analyze();
 		_.forEach(Memory.creeps, (memory, name: string) => {
 			this.population.analyzePer(memory, name);
 		});
-
+		this.population.analyze();
 		this.creepMoudle('setups', 'analyze');
 		this.creepMoudle('behaviours', 'analyze');
 		this.creepMoudle('actions', 'analyze');

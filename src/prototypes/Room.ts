@@ -63,6 +63,10 @@ class RoomExtend extends Room {
 		return this.memoryCache('spawns', () => this.structures.spawns);
 	}
 
+	get extensions(): StructureExtension[] {
+		return this.memoryCache('extensions', () => this.structures.extensions);
+	}
+
 	get freeSpawns(): StructureSpawn[] {
 		return this.cache('freeSpawns', () => _.filter(this.spawns, s => !s.spawning));
 	}
@@ -71,6 +75,12 @@ class RoomExtend extends Room {
 		return this.cache('hasMinerOrHauler', () => {
 			return this.getBehaviourCount('miner') > 0 || this.getBehaviourCount('hauler') > 0;
 		});
+	}
+
+	get feedable(): (StructureExtension | StructureSpawn)[] {
+		return this.cache('feedable', () =>
+			_.filter([...this.extensions, ...this.spawns], s => s.energy < s.energyCapacity),
+		);
 	}
 
 	getBehaviourCount(behaviour: string): number {

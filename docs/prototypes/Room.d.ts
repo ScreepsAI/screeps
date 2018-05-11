@@ -14,13 +14,18 @@ interface Room {
 	sources: { [id: string]: any }
 	minerals: { [id: string]: any }
 	spawns: StructureSpawn[]
+	extensions: StructureExtension[]
 	freeSpawns: StructureSpawn[]
-	hasMinerOrHauler:boolean
+	hasMinerOrHauler: boolean
+	feedable: (StructureExtension | StructureSpawn)[]
+
 	getBehaviourCount(behaviour: string): number
+
 	getActionCount(action: string): number
 
-	spawnQueue:  { [behaviour: string]: SpawnOrder }
-	addSpawnQueue(order: SpawnOrder):void
+	spawnQueue: { [behaviour: string]: SpawnOrder }
+
+	addSpawnQueue(order: SpawnOrder): void
 
 	center: Pos
 
