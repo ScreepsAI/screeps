@@ -12,7 +12,7 @@ interface CreepMemory {
 	flagName?: string
 	lastFlagName?: string,
 	actionName?: string,
-	state?: string,
+	state?: number,
 	lastActionName?: string,
 	targetId?: string,
 	lastTargetId?: string,

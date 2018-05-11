@@ -32,7 +32,6 @@ export abstract class CreepAction extends Module {
 			return false;
 		}
 		if (!creep.memory.actionName || creep.memory.actionName !== this.namespace) {
-			console.log(creep.memory.actionName);
 			creep.assignAction(this);
 		}
 		if (this.needTarget) {

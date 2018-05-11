@@ -4,6 +4,7 @@ interface CreepManager extends Manager {
 	population: CreepPopulation
 	actions: {
 		harvesting: CreepAction
+		upgrading: CreepAction
 	}
 	behaviours: {
 		wroker: CreepBehaviour

@@ -8,12 +8,15 @@ export abstract class CreepBehaviour extends Module {
 		this.manager = manager;
 	}
 
+	abstract handleState(creep: Creep): void;
+
 	abstract actions(creep: Creep): CreepAction[];
 
 	runPer(creep: Creep): void {
 		let busy = false;
 		if (creep.action) busy = creep.action.runPer(creep);
 		if (busy) return;
+		this.handleState(creep);
 		_.forEach(this.actions(creep), action => {
 			if (busy) return;
 			busy = action.runPer(creep);
