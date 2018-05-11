@@ -5,6 +5,7 @@ interface RoomPosition {
 	constructionSites: ConstructionSite[];
 	creeps: Creep[];
 	accessible: boolean;
+	walkable: boolean
 
 	radius(radius: number): RoomPosition[];
 

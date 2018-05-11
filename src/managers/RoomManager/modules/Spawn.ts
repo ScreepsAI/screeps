@@ -20,7 +20,7 @@ export class RoomSpawn extends RoomModule {
 	}
 
 	registerPer(room: Room): void {
-		if (_.isUndefined(room.memory.spawnQueue)) room.memory.spawnQueue = {};
+		Util.setDefault(room.memory, 'spawnQueue', {});
 	}
 
 	analyzePer(room: Room): void {

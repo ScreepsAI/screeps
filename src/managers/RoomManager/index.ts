@@ -7,7 +7,7 @@ export class RoomManager extends Manager {
 
 	constructor() {
 		super('RoomManager');
-		if (_.isUndefined(Memory.rooms)) Memory.rooms = {};
+		Util.setDefault(Memory, 'rooms', {});
 	}
 
 	events = {
@@ -36,7 +36,7 @@ export class RoomManager extends Manager {
 		// room
 		_.forEach(this.rooms, (room: Room) => {
 			// memory.root
-			if (_.isUndefined(room.memory.root)) room.memory.root = Game.time;
+			Util.setDefault(room.memory, 'root', Game.time);
 			// memory.check
 			room.memory.check = Game.time;
 			// module

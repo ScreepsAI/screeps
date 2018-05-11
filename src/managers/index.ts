@@ -28,22 +28,22 @@ export abstract class Module extends Manager {
 	}
 
 	// @ts-ignore
-	checkPer(...arg?: any[]): boolean {
+	checkPer(...arg: any[]): boolean {
 		return true;
 	}
 
 	// @ts-ignore
-	freshPer(...arg?: any[]): void {}
+	freshPer(...arg: any[]): void {}
 
 	// @ts-ignore
-	registerPer(...arg?: any[]): void {}
+	registerPer(...arg: any[]): void {}
 
 	// @ts-ignore
-	analyzePer(...arg?: any[]): void {}
+	analyzePer(...arg: any[]): void {}
 
 	// @ts-ignore
-	runPer(...arg?: any[]): void {}
+	runPer(...arg: any[]): void {}
 
 	// @ts-ignore
-	cleanupPer(...arg?: any[]): void {}
+	cleanupPer(...arg: any[]): void {}
 }

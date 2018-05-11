@@ -1,6 +1,6 @@
 export class GameEvent {
 	constructor(trigger?: () => boolean) {
-		if (_.isUndefined(Memory.events)) Memory.events = {};
+		Util.setDefault(Memory, 'events', {});
 		if (trigger) this.trigger = trigger;
 	}
 

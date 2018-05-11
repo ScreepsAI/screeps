@@ -21,5 +21,15 @@ interface RoomEvent {
 // ////////////////////////////////////////////////////////////////////
 
 interface RoomModule extends Module {
+	checkPer(room: Room): boolean
 
+	freshPer(room: Room): void
+
+	registerPer(room: Room): void
+
+	analyzePer(room: Room): void
+
+	runPer(room: Room): void
+
+	cleanupPer(room: Room): void
 }

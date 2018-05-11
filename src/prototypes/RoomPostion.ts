@@ -43,6 +43,13 @@ class RoomPositionExtend extends RoomPosition {
 		});
 	}
 
+	get walkable(): boolean {
+		return this.cache('walkable', () => {
+			if (!this.accessible) return false;
+			return this.creeps.length === 0;
+		});
+	}
+
 	radius(radius: number): RoomPosition[] {
 		const positions = [];
 		for (let x = this.x - radius; x <= this.x + radius; x++) {

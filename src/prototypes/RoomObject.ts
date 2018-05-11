@@ -2,6 +2,7 @@ class RoomObjectExtend extends RoomObject {
 	/// ///////////////////////////////////////////////////////////////////
 	// cache
 	/// ///////////////////////////////////////////////////////////////////
+
 	private cache(key: string, func: Function): any {
 		if (_.isUndefined(this[`_${key}`])) this[`_${key}`] = func();
 		return this[`_${key}`];

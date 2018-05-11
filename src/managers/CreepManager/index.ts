@@ -4,7 +4,7 @@ import { GameEvent } from '../../lib';
 export class CreepManager extends Manager {
 	constructor() {
 		super('CreepManager');
-		if (_.isUndefined(Memory.creeps)) Memory.creeps = {};
+		Util.setDefault(Memory, 'creeps', {});
 	}
 
 	population = new (require('./Population')).CreepPopulation(this);
@@ -19,9 +19,14 @@ export class CreepManager extends Manager {
 		worker: new (require('./setups/worker')).WorkerSetup(this),
 	};
 
-	behaviours = {};
+	behaviours = {
+		worker: new (require('./behaviours/worker')).WorkerBehaviour(this),
+	};
 
-	actions = {};
+	actions = {
+		harvesting: new (require('./actions/harvesting')).ActionHarvesting(this),
+		upgrading: new (require('./actions/upgrading')).ActionUpgrading(this),
+	};
 
 	// ////////////////////////////////////////////////////////////////////
 	// Manager
@@ -60,7 +65,9 @@ export class CreepManager extends Manager {
 		this.creepMoudle('behaviours', 'run');
 		this.creepMoudle('actions', 'run');
 
-		_.forEach(Game.creeps, creep => {});
+		_.forEach(Game.creeps, creep => {
+			this.behaviours[creep.memory.behaviour].runPer(creep);
+		});
 	}
 
 	cleanup(): void {
@@ -86,27 +93,44 @@ export class CreepManager extends Manager {
 		});
 	}
 
-	registerAction(creep: Creep, action: CreepAction, target: Target): void {
-		const memory = creep.memory;
+	assignAction(creep: Creep, action: CreepAction, target?: Target): boolean {
+		if (!creep || !action) return false;
 		const actionName = action.namespace;
-		const targetId = target.id || target.name;
-		const oldTargetId = memory.targetId;
 
-		if (_.isUndefined(target.targetOf)) target.targetOf = {};
-		target.targetOf[creep.name] = memory;
+		if (target) {
+			const targetId = target.id;
+			const oldTargetId = creep.memory.targetId;
+			Util.setDefault(target, 'targetOf', {});
+			target.targetOf[creep.name] = creep.memory;
 
-		if (oldTargetId && targetId !== oldTargetId) {
-			delete memory.path;
-			const oldTarget = Game.getObjectById(oldTargetId) as Target;
-			if (oldTarget && oldTarget.targetOf) delete oldTarget.targetOf[creep.name];
+			if (oldTargetId && targetId !== oldTargetId) {
+				delete creep.memory.path;
+				const oldTarget = Game.getObjectById(oldTargetId) as Target;
+				if (oldTarget && oldTarget.targetOf) delete oldTarget.targetOf[creep.name];
+			}
+			creep.memory.lastTargetId = creep.memory.targetId;
+			creep.memory.targetId = targetId;
+			creep.target = target;
+		} else {
+			creep.memory.lastTargetId = creep.memory.targetId;
+			delete creep.target;
 		}
-		memory.actionName = actionName;
-		memory.targetId = targetId;
+
+		creep.memory.lastActionName = creep.memory.actionName;
+		creep.memory.actionName = actionName;
+
 		creep.action = action;
-		creep.target = target;
+		// @ts-ignore
+		action.onAssignment(creep, target);
+
+		// say action
+		if (target) creep.room.visual.line(creep.pos, target.pos, { width: 0.2, opacity: 0.2 });
+		creep.say(Util.emoji[actionName]);
+		return true;
 	}
 
-	registerFlag(creep: Creep, flag: Flag): void {
+	assignFlag(creep: Creep, flag: Flag): boolean {
+		if (!creep || !flag) return false;
 		const memory = creep.memory;
 		const flagName = flag.name;
 		const oldFlagName = memory.flagName;
@@ -119,7 +143,9 @@ export class CreepManager extends Manager {
 			if (oldFlag && oldFlag.targetOf) delete oldFlag.targetOf[creep.name];
 		}
 
+		memory.lastFlagName = memory.flagName;
 		memory.flagName = flagName;
 		creep.flag = flag;
+		return true;
 	}
 }

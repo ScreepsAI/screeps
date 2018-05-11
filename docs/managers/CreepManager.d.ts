@@ -2,19 +2,26 @@ declare const CreepManager: CreepManager
 
 interface CreepManager extends Manager {
 	population: CreepPopulation
-	actions: { [name: string]: CreepAction }
-	behaviours: { [name: string]: CreepBehaviour }
-	setups: { [name: string]: CreepSetup }
+	actions: {
+		harvesting: CreepAction
+	}
+	behaviours: {
+		wroker: CreepBehaviour
+	}
+	setups: {
+		wroker: CreepSetup
+	}
 	events: CreepEvent
 
-	registerAction(creep: Creep, action: CreepAction, target: Target): void
+	assignAction(creep: Creep, action: CreepAction, target?: Target): boolean
 
-	registerFlag(creep: Creep, flag: Flag): void
+	assignFlag(creep: Creep, flag: Flag): boolean
 }
 
-interface Target extends RoomObject {
+type Target = Creep | Structure | Source | Mineral | RoomObject
+
+interface RoomObject {
 	id: string,
-	name: string
 }
 
 // ////////////////////////////////////////////////////////////////////
@@ -101,5 +108,7 @@ interface CreepBehaviour extends Module {
 // ////////////////////////////////////////////////////////////////////
 
 interface CreepAction extends Module {
+	runPer(creep: Creep): boolean
 
+	onAssignment(creep: Creep, target: Target): void
 }

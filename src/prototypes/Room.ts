@@ -82,11 +82,10 @@ class RoomExtend extends Room {
 	}
 
 	get spawnQueue(): { [behaviour: string]: SpawnOrder } {
-		return _.get(this.memory, 'spawnQueue');
+		return _.get(this.memory, 'spawnQueue', {});
 	}
 
 	addSpawnQueue(order: SpawnOrder): void {
-		if (_.isUndefined(this.memory.spawnQueue)) this.memory.spawnQueue = {};
 		this.memory.spawnQueue[order.behaviour] = order;
 	}
 

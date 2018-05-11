@@ -10,6 +10,10 @@ interface CreepMemory {
 	renewTicks?: number,
 	renewCheck?: boolean
 	flagName?: string
+	lastFlagName?: string,
 	actionName?: string,
+	state?: string,
+	lastActionName?: string,
 	targetId?: string,
+	lastTargetId?: string,
 }

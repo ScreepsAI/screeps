@@ -17,13 +17,13 @@ interface Module extends Manager {
 
 	checkPer(room: Room): boolean
 
-	freshPer(room: Room): void
+	freshPer(...arg: any[]): void
 
-	registerPer(room: Room): void
+	registerPer(...arg: any[]): void
 
-	analyzePer(room: Room): void
+	analyzePer(...arg: any[]): void
 
-	runPer(room: Room): void
+	runPer(...arg: any[]): void
 
-	cleanupPer(room: Room): void
+	cleanupPer(...arg: any[]): void
 }

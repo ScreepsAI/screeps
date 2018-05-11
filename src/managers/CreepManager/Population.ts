@@ -46,7 +46,6 @@ export class CreepPopulation extends Module {
 		if (!creep.spawning) {
 			this.handleRoot(memory, creep);
 			this.handleFlag(memory, creep);
-			this.handleAction(memory, creep);
 		}
 		this.countCreep(memory);
 	}
@@ -97,23 +96,7 @@ export class CreepPopulation extends Module {
 		if (_.isUndefined(flag)) {
 			delete memory.flagName;
 		} else {
-			this.manager.registerFlag(creep, flag);
-		}
-	}
-
-	private handleAction(memory: CreepMemory, creep: Creep): void {
-		delete creep.action;
-		delete creep.target;
-		const action = memory.actionName ? this.manager.actions[memory.actionName] : null;
-		const target = memory.targetId ? Game.getObjectById(memory.targetId) : null;
-
-		if (action && target && Creep !== target) {
-			this.manager.registerAction(creep, action, target as Target);
-		} else {
-			delete memory.actionName;
-			delete memory.targetId;
-			creep.action = null;
-			creep.target = null;
+			this.manager.assignFlag(creep, flag);
 		}
 	}
 

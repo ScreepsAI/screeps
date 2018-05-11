@@ -29,9 +29,7 @@ export abstract class CreepSetup extends Module {
 		// fixedBody
 		if (_.isUndefined(setup.fixedBody)) setup.fixedBody = [];
 		// maxMulti
-		if (_.isUndefined(setup.maxMulti)) {
-			setup.maxMulti = this.maxMulti(room, setup);
-		}
+		if (_.isUndefined(setup.maxMulti)) setup.maxMulti = this.maxMulti(room, setup);
 		// other
 		_.forEach(setup, (prop: any, key: string) => {
 			setup[key] = _.isFunction(prop) ? prop(room, setup) : prop;

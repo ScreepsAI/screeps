@@ -7,8 +7,11 @@ export class WorkerSetup extends CreepSetup {
 
 	checkPer(room: Room): boolean {
 		if (!room.my || room.RCL < this.minControllerLevel || room.freeSpawns.length === 0) return false;
-		if (room.RCL >= 2 && !room.hasMinerOrHauler && room.spawnQueue['worker'].cost > room.energyAvailable) return true;
-		return _.isUndefined(room.spawnQueue['worker']);
+		const worker: SpawnOrder = _.get(room.spawnQueue, 'worker');
+		if (room.RCL >= 2 && !room.hasMinerOrHauler) {
+			if (worker && worker.cost > room.energyAvailable) return true;
+		}
+		return _.isUndefined(worker);
 	}
 
 	// ////////////////////////////////////////////////////////////////////
