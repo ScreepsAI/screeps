@@ -6,6 +6,9 @@ export class CreepManager extends Manager {
 		super('creep', Creep);
 	}
 
+	addSpawningCreep(creepMemory) {
+		this.memoryCaches;
+	}
 	// clean() {
 	// 	_.forEach(Object.keys(Memory.creeps), creepName => {
 	// 		const e = Game.creeps[creepName];

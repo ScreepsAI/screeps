@@ -24,27 +24,64 @@ export const UUID = randomLength =>
 	).toString(36);
 
 const ScreepsIdClassList = [
-	Creep,
-	Structure,
-	Source,
-	Resource,
-	Mineral,
-	Nuke,
-	ConstructionSite,
-	Tombstone,
+	'Creep',
+	'Source',
+	'Resource',
+	'Mineral',
+	'ConstructionSite',
+	'Tombstone',
+	'StructureController',
+	'StructureContainer',
+	'StructureExtension',
+	'StructureExtractor',
+	'StructureKeeperLair',
+	'StructureLab',
+	'StructureLink',
+	'StructureNuker',
+	'StructureObserver',
+	'StructurePortal',
+	'StructurePowerBank',
+	'StructurePowerSpawn',
+	'StructureRampart',
+	'StructureRoad',
+	'StructureSpawn',
+	'StructureStorage',
+	'StructureTerminal',
+	'StructureTower',
+	'StructureWall',
 ];
 const ScreepsNameClassList = [Room, Flag];
 export const instantiate = (memoryData, entryClass) => {
 	let entry = undefined;
-	if (_.includes(ScreepsIdClassList, entryClass)) {
-		entry = new this.entryClass(memoryData.id);
-		Object.assign(entry, memoryData);
-	} else if (_.includes(ScreepsNameClassList, entryClass)) {
-		entry = new this.entryClass(memoryData.name);
-		Object.assign(entry, memoryData);
-	} else {
-		entry = new entryClass({ ...memoryData });
+	try {
+		if (_.includes(ScreepsIdClassList, entryClass)) {
+			entry = new entryClass(memoryData.id);
+			Object.assign(entry, memoryData);
+		} else if (_.includes(ScreepsNameClassList, entryClass)) {
+			entry = new entryClass(memoryData.name);
+			Object.assign(entry, memoryData);
+		} else {
+			entry = new entryClass({ ...memoryData });
+		}
+	} catch (e) {
+		throw e;
+	} finally {
+		return entry;
 	}
-	if (entry === undefined) throw new Error('instantiate entry fail');
-	return entry;
+};
+
+export const checkObjectInGame = entry => {
+	try {
+		if (!entry) throw new Error('checkObjectInGame: entry is undefined');
+		if (entry instanceof Creep) return !!Game.creeps[entry.name];
+		else if (entry instanceof StructureSpawn) return !!Game.spawns[entry.name];
+		else if (entry instanceof Room) return !!Game.rooms[entry.name];
+		else if (_.includes(ScreepsIdClassList, entry.className)) {
+			return !!Game.getObjectById(entry.id);
+		} else if (_.includes(ScreepsNameClassList, entry.className)) {
+			return !!new global[entry.className](entry.name);
+		} else throw new Error(`the kind of entry is unknown: ${entry.className}`);
+	} catch (e) {
+		throw e;
+	}
 };

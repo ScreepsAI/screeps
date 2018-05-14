@@ -14,8 +14,23 @@ export class Manager {
 	 */
 	constructor(entryName, entryClass) {
 		this.entryName = entryName;
+		if (!global['entryName2Memory']) global['entryName2Memory'] = {};
+		global['entryName2Memory'][entryName] = this;
 		this.entryClass = entryClass;
+		this.entryClassName = entryClass.className;
 		this.initCacheManagerByName(entryName);
+	}
+
+	get raw() {
+		return _.pick(this, this.paramsList);
+	}
+
+	get paramsList() {
+		return ['UUID', 'entryName', 'entryClassName'];
+	}
+
+	get existCheckKeyArray() {
+		return ['id'];
 	}
 
 	initCacheManagerByName(entryName) {
@@ -33,18 +48,21 @@ export class Manager {
 		if (tickEntry) return tickEntry;
 
 		// 再考虑运行时缓存
-		const runtimeEntry = this.runtimeCaches.get(UUID);
-		if (runtimeEntry) return this.tickCaches.add(runtimeEntry); //找到后进行单帧缓存
-
-		// 基本不会去找持久化缓存
-		let entry;
-		const memoryEntry = this.memoryCaches.get(UUID);
-		if (memoryEntry) entry = instantiate(memoryEntry, this.entryClass);
-		if (entry) {
-			this.runtimeCaches.add(entry);
-			return this.tickCaches.add(entry);
+		try {
+			const runtimeEntry = this.runtimeCaches.get(UUID);
+			if (runtimeEntry) return this.tickCaches.add(runtimeEntry); //找到后进行单帧缓存
+			// 基本不会去找持久化缓存
+			let entry;
+			const memoryEntry = this.memoryCaches.get(UUID);
+			if (memoryEntry) entry = instantiate(memoryEntry, this.entryClass);
+			if (entry) {
+				this.runtimeCaches.add(entry);
+				return this.tickCaches.add(entry);
+			}
+			return undefined;
+		} catch (e) {
+			throw e;
 		}
-		return undefined;
 	}
 
 	get entries() {
@@ -59,10 +77,20 @@ export class Manager {
 	 * @param entry
 	 * @param ignoreExist 是否要忽略校验是否已存在
 	 */
-	add(entry, ignoreExist) {
-		if (this.checkExist(entry) === false || ignoreExist) {
-			entry.UUID = UUID();
-			this.runtimeCaches.add(entry, ignoreExist);
+	add(
+		entry,
+		{ ignoreExist = false, ignoreInstantiate = false } = {
+			ignoreExist: false,
+			ignoreInstantiate: false,
+		},
+	) {
+		const exist = this.checkExist(entry);
+		if (exist === false || ignoreExist) {
+			if (exist) {
+				entry.UUID = exist.UUID;
+			} else entry.UUID = UUID();
+			this.memoryCaches.add(entry, { ignoreExist, ignoreInstantiate });
+			this.runtimeCaches.add(entry, { ignoreExist, ignoreInstantiate });
 		}
 	}
 
@@ -71,9 +99,9 @@ export class Manager {
 	 * @param ignoreExist 是否要忽略校验是否已存在
 	 */
 	addEntries(entries, ignoreExist) {
-		if (_.isArray(entries)) {
-			_.each(entries, entry => this.add(entry, ignoreExist));
-		} else Log.warn('params is not an array');
+		const that = this;
+		if (_.isArray(entries) && entries.length > 0)
+			_.forEach(entries, entry => that.add(entry, ignoreExist));
 	}
 
 	/**
@@ -83,19 +111,21 @@ export class Manager {
 	modify(entry, modifyOptions) {
 		if (this.checkExist(entry) === true) {
 			let validOptions = {};
+			let invalidOptions = [];
 			_.forEach(modifyOptions, (option, key) => {
 				if (key in this.entryClass.existCheckKeyArray) {
 					// 过滤出有效的修改字段
 					validOptions[key] = option;
-				}
+				} else invalidOptions.push(key);
 			});
+			Log.warn(`modify ${this.entryClassName}: invalid params: ${invalidOptions.join(',')}`);
 			this.runtimeCaches.modify(entry, validOptions);
 		}
 	}
 
 	checkExist(entry) {
 		if (entry === undefined) throw new Error('entry is undefined');
-		if (entry.UUID) return true;
+		if (entry.UUID) return entry;
 		else return this.memoryCaches.checkExist(entry);
 	}
 

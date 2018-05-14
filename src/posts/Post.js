@@ -47,6 +47,7 @@
  * ============================================================================
  */
 import * as _ from 'lodash';
+import { UUID as createUUID } from '../utils/global';
 
 /**
  * 合同的产生情况分为两种
@@ -61,8 +62,6 @@ export class Post {
 	id;
 	postType;
 	entries;
-	entriesName;
-	entriesId;
 	/**
 	 * 签署这个合同至少需要什么“种类”的部件，注意是种类，不需要标注数量
 	 */
@@ -89,12 +88,11 @@ export class Post {
 	 * @param {BodyPartConstant[]} bodyNeed 签署这个合同至少需要什么“种类”的部件，注意是种类，不需要标注数量
 	 * @param {object} options 额外的配置，仅限字面量或字面量属性值的对象
 	 */
-	constructor({ postType, entries, entriesId, entriesName, bodyNeed, options, id, status }) {
-		this.id = id || `post-${new Date().getTime()}`;
+	constructor({ postType, entries, entriesId, bodyNeed, options, UUID, status }) {
+		this.UUID = UUID || createUUID();
 		this.postType = postType;
 		this.entries = entries || {};
 		this.entriesId = entriesId || {};
-		this.entriesName = entriesName || {};
 		this.bodyNeed = bodyNeed || [];
 		this.options = options || {};
 		this.status = status || 0;

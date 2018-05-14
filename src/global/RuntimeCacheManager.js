@@ -4,7 +4,7 @@
  * Description:
  */
 import _ from 'lodash';
-import { instantiate } from '../utils/global';
+import { instantiate, checkObjectInGame } from '../utils/global';
 
 export class RuntimeCacheManager {
 	constructor(memoryCacheManager, entryClass) {
@@ -20,9 +20,11 @@ export class RuntimeCacheManager {
 		try {
 			if (UUID === undefined) throw new Error('UUID is undefined');
 			const entries = global[`${this.entryName}s`];
-			if (!entries)
+			const entry = entries[UUID];
+			const globalEntry = checkObjectInGame(entry);
+			if (!entry && !globalEntry)
 				throw new Error(`unable to find this kind of Entry: ${this.entryName} in Global`);
-			return entries[UUID];
+			return entry[UUID];
 		} catch (e) {
 			throw e;
 			return undefined;
@@ -36,17 +38,33 @@ export class RuntimeCacheManager {
 		return entries;
 	}
 
-	add(entry, ignoreExist) {
-		if (entry === undefined) throw new Error('entry is undefined');
-		if (!(entry instanceof this.entryClass))
-			throw new Error(`entry is instanceof ${this.entryClass.name}`);
-		if (entry.UUID === undefined) throw new Error('entry has not a UUID');
-		return (global[`${this.entryName}s`][entry.UUID] = entry);
+	add(
+		entry,
+		{ ignoreExist = false, ignoreInstantiate = false } = {
+			ignoreExist: false,
+			ignoreInstantiate: false,
+		},
+	) {
+		try {
+			if (entry === undefined) throw new Error('entry is undefined');
+			if (!(entry instanceof this.entryClass))
+				throw new Error(`entry is instanceof ${this.entryClass.name}`);
+			if (entry.UUID === undefined)
+				Log.error(`add ${this.memoryCacheManager.entryName}: entry has no UUID`);
+			if (!ignoreExist && global[`${this.entryName}s`][entry.UUID]) {
+				throw new Error(`RuntimeCacheManager-${this.entryName}-add: entry has existed`);
+			}
+			return (global[`${this.entryName}s`][entry.UUID] = entry);
+		} catch (e) {
+			throw e;
+			return;
+		}
 	}
 
 	modify(entry, modifyOptions) {
 		if (entry === undefined) throw new Error('entry is undefined');
-		if (entry.UUID === undefined) throw new Error('entry has not a UUID');
+		if (entry.UUID === undefined)
+			throw new Error(`modify ${this.memoryCacheManager.entryName}: entry has no UUID`);
 		if (this.memoryCacheManager.modify(entry, modifyOptions)) {
 			return (global[`${this.entryName}s`][entry.UUID] = Object.assign(entry, modifyOptions));
 		}
@@ -65,8 +83,14 @@ export class RuntimeCacheManager {
 		const that = this;
 		this.setEmpty();
 		const memoryEntries = this.memoryCacheManager.getEntries();
-		_.forEach(memoryEntries, memory => {
-			that.add(instantiate(memory, that.entryClass));
+		_.forEach(memoryEntries, (memory, UUID) => {
+			try {
+				const entry = instantiate(memory, that.entryClass);
+				if (entry !== undefined) that.add(entry, { ignoreExist: true });
+				else if (UUID !== undefined) this.memoryCacheManager.delete(UUID);
+			} catch (e) {
+				throw e;
+			}
 		});
 	}
 }

@@ -4,20 +4,50 @@
  * Description:
  */
 import _ from 'lodash';
-class ControllerExtend extends StructureController {
+
+StructureController.existCheckKeyArray = ['id'];
+StructureController.className = 'StructureController';
+StructureController.prototype.className = 'StructureController';
+StructureController.prototype.currentWorkers = [];
+class StructureControllerExtend extends StructureController {
 	get raw() {
 		return _.pick(this, this.paramsList);
 	}
-
-	get existCheckKeyArray() {
-		return ['id'];
+	get paramsList() {
+		return ['UUID', 'id', 'currentWorkers'];
+	}
+	get accessibleWorkers() {
+		if (this._accessibleWorkers === undefined) {
+			this._accessibleWorkers = this.pos.getAccessibleFields();
+		}
+		return this._accessibleWorkers;
+	}
+	set accessibleWorkers(v) {
+		this._accessibleWorkers = [];
+		_.forEach(v, p => {
+			this._accessibleWorkers.push(new RoomPosition(p.x, p.y, p.roomName));
+		});
 	}
 
-	get paramsList() {
-		return ['UUID', 'id'];
+	setWorker(UUID) {
+		this.currentWorkers.push(UUID);
+		ControllerManager.modify(this, this.raw);
+	}
+
+	removeWorker(UUID) {
+		const index = this.currentWorkers.indexOf(UUID);
+		if (index < 0) return;
+		else {
+			this.currentWorkers.splice(index, 1);
+			ControllerManager.modify(this, this.raw);
+		}
+	}
+	clearWorkers() {
+		this.currentWorkers = [];
+		ControllerManager.modify(this, this.raw);
 	}
 }
 Object.defineProperties(
 	StructureController.prototype,
-	Object.getOwnPropertyDescriptors(ControllerExtend.prototype),
+	Object.getOwnPropertyDescriptors(StructureControllerExtend.prototype),
 );

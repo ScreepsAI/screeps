@@ -15,10 +15,10 @@ export class SourceManager extends Manager {
 	 */
 	// cleanPost() {}
 
-	add(source) {
-		source.accessibleFields = source.pos.getRawAccessibleFields();
-		if (this.checkExist()) super.add(source);
-	}
+	// add(source) {
+	// 	// source.accessibleFields = source.pos.getRawAccessibleFields();
+	// 	if (!this.checkExist(source)) super.add(source);
+	// }
 
 	/**
 	 * 创建岗位信息

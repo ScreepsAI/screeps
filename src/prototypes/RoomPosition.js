@@ -7,8 +7,20 @@ class RoomPositionExtend extends RoomPosition {
 		};
 	}
 
+	/**
+	 * 前两位x坐标后两位y坐标
+	 * 0000，0102，1002，0049
+	 * @return {*}
+	 */
+	get name() {
+		return String(this.x).padStart(2, '0') + String(this.y).padStart(2, '0');
+	}
+
 	get room() {
 		return Game.rooms[this.roomName];
+	}
+	get terrain() {
+		return this.lookFor(LOOK_TERRAIN)[0];
 	}
 
 	// 获取坐标点为中心，range为半径的正方形范围内的有效坐标对象数组

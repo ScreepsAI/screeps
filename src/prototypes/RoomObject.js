@@ -3,18 +3,10 @@
  * Create: 2018-04-25
  * Description:
  */
-import _ from 'lodash';
-import { UUID } from '../utils/global';
+// import _ from 'lodash';
+// import { UUID } from '../utils/global';
 
-RoomObject.existCheckKeyArray = [];
 class RoomObjectExtend extends RoomObject {
-	get UUID() {
-		if (this._UUID === undefined) this._UUID = UUID();
-		return this._UUID;
-	}
-	set UUID(v) {
-		this._UUID = v;
-	}
 	get entries() {
 		return this.pos.look();
 	}

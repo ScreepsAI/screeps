@@ -4,12 +4,14 @@
  * Description:
  */
 import _ from 'lodash';
+
+Flag.existCheckKeyArray = ['name'];
+Flag.className = 'Flag';
+Flag.prototype.className = 'Flag';
+
 class FlagExtend extends Flag {
 	get raw() {
 		return _.pick(this, this.paramsList);
-	}
-	get existCheckKeyArray() {
-		return ['name'];
 	}
 
 	get paramsList() {

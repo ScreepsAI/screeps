@@ -1,52 +1,38 @@
-import * as _ from 'lodash';
-
 /**
  * Creep
  */
 import _ from 'lodash';
+Creep.existCheckKeyArray = ['id'];
+Creep.className = 'Creep';
+Creep.prototype.className = 'Creep';
 class CreepExtend extends Creep {
 	get raw() {
 		return _.pick(this, this.paramsList);
 	}
 
-	get existCheckKeyArray() {
-		return ['id'];
-	}
-
 	get paramsList() {
-		return ['UUID', 'id'];
+		return ['UUID', 'id', 'spawning', 'hasHurt'];
 	}
 
-	get isHurt() {
+	get hasHurt() {
 		return this.hits < this.hitsMax;
 	}
 
-	/**
-	 * 判断creep是否用指定array中的part类型，有一个就返回
-	 */
-	hasBodyParts(partTypes, start = 0) {
-		const body = this.body;
-		const limit = body.length;
-		if (!_.isArray(partTypes)) partTypes = [partTypes];
-		for (let i = start; i < limit; i++) {
-			if (_.includes(partTypes, body[i].type)) return true;
-		}
-		return false;
+	get emptyBag() {
+		return _.reduce(this.carry, (sum, v) => (sum += v)) === 0;
+	}
+
+	get fullBag() {
+		return _.reduce(this.carry, (sum, v) => (sum += v)) === this.carryCapacity;
 	}
 
 	/**
-	 * 判断是否有可用的part
+	 * 查找对象
+	 * @param type
+	 * @param room
+	 * @param range
 	 */
-	hasActiveBodyparts(partTypes) {
-		return this.hasBodyParts(partTypes, this.body.length - Math.ceil(this.hits * 0.01));
-	}
-
-	/**
-	 * 获取指定类型的部件数量
-	 */
-	getBodyparts() {
-		return null;
-	}
+	find(type, room, range, opts) {}
 }
 
 Object.defineProperties(Creep.prototype, Object.getOwnPropertyDescriptors(CreepExtend.prototype));

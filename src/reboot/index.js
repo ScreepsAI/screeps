@@ -8,8 +8,6 @@ import { loadConfig } from './loadConfig';
 import { loadGlobal } from './loadGlobal';
 import { loadManager } from './loadManagers';
 
-// import './initManagers';
-
 export const reboot = () => {
 	// 运行时环境，内存或者设置只要有一个需要初始化就执行初始化流程
 	global['hasRoot'] = true;
@@ -23,6 +21,8 @@ export const reboot = () => {
 	loadConfig();
 	loadGlobal();
 	loadManager();
+
+	Policy.statistic();
 
 	Log.success('Root Done');
 };

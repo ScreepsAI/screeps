@@ -4,19 +4,19 @@
  * Description:
  */
 import _ from 'lodash';
+StructureExtension.existCheckKeyArray = ['id'];
+StructureExtension.className = 'StructureExtension';
+StructureExtension.prototype.className = 'StructureExtension';
 class ExtensionExtend extends StructureExtension {
 	get raw() {
 		return _.pick(this, this.paramsList);
-	}
-
-	get existCheckKeyArray() {
-		return ['id'];
 	}
 
 	get paramsList() {
 		return ['UUID', 'id'];
 	}
 }
+
 Object.defineProperties(
 	StructureExtension.prototype,
 	Object.getOwnPropertyDescriptors(ExtensionExtend.prototype),
